@@ -1,506 +1,751 @@
 // js/image-studio.js
-// J GIL Image Studio – client-side placeholder renderer
+// J GIL Image Studio – client-side placeholder renderer.
 // All logic runs fully in the browser. No external calls.
 
-const jgilStudioState = {
-  initialized: false,
-  currentMode: "artwork",
-  selectedPresets: [],
-  hasImage: false,
-  elements: {},
-};
+(function () {
+  "use strict";
 
-document.addEventListener("DOMContentLoaded", initImageStudio);
-
-function initImageStudio() {
-  const promptInput = document.getElementById("jgil-prompt");
-  const canvas = document.getElementById("jgil-canvas");
-  const previewEmpty = document.getElementById("jgil-preview-empty");
-  const supportMessage = document.getElementById("jgil-support-message");
-  const generateBtn = document.getElementById("jgil-generate-btn");
-  const modeButtons = document.querySelectorAll(".mode-option");
-  const presetPills = document.querySelectorAll(".preset-pill");
-  const sizeSelect = document.getElementById("jgil-size");
-  const detailSelect = document.getElementById("jgil-detail");
-  const downloadBtn = document.getElementById("jgil-download-btn");
-  const saveBtn = document.getElementById("jgil-save-btn");
-  const clearBtn = document.getElementById("jgil-clear-btn");
-  const gallery = document.getElementById("jgil-gallery");
-
-  // If we're on a page that doesn't have the studio markup, exit early.
-  if (!promptInput || !canvas || !generateBtn || !gallery) {
-    return;
-  }
-
-  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
-
-  jgilStudioState.elements = {
-    promptInput,
-    canvas,
-    ctx,
-    previewEmpty,
-    supportMessage,
-    generateBtn,
-    modeButtons,
-    presetPills,
-    sizeSelect,
-    detailSelect,
-    downloadBtn,
-    saveBtn,
-    clearBtn,
-    gallery,
+  // Global-ish state inside this IIFE
+  const studioState = {
+    currentMode: "artwork",
+    selectedPresets: [],
+    hasImage: false,
+    canvasSize: { width: 1024, height: 1024 },
+    detailLevel: "Balanced",
+    elements: {},
   };
 
-  // Capability check
-  const canvasSupported =
-    typeof HTMLCanvasElement !== "undefined" &&
-    canvas instanceof HTMLCanvasElement &&
-    typeof canvas.getContext === "function";
-
-  let hasGpu = false;
-  let hasWebGL = false;
-
-  try {
-    hasGpu = typeof navigator !== "undefined" && "gpu" in navigator;
-  } catch (e) {
-    hasGpu = false;
-  }
-
-  if (canvasSupported) {
-    try {
-      const gl =
-        canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-      if (gl) {
-        hasWebGL = true;
-      }
-    } catch (e) {
-      hasWebGL = false;
+  /**
+   * Entry point – makes sure we always run, even if DOMContentLoaded
+   * already fired before the script attached its listener.
+   */
+  function ready(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn);
+    } else {
+      fn();
     }
   }
 
-  if (!canvasSupported || (!hasGpu && !hasWebGL)) {
-    if (supportMessage) {
-      supportMessage.textContent =
-        "Your browser does not appear to support the graphics features needed for this studio. Try an updated version of Chrome, Edge, Firefox, or Safari.";
+  ready(initImageStudio);
+
+  function initImageStudio() {
+    const supportEl = document.getElementById("jgil-support-message");
+    studioState.elements.support = supportEl || null;
+
+    // Basic feature check (canvas + WebGL/WebGPU)
+    if (!window.HTMLCanvasElement) {
+      setSupportMessage(
+        "Your browser does not support the HTML canvas element required for J GIL Image Studio.",
+        true
+      );
+      disableGenerate();
+      return;
     }
-    generateBtn.disabled = true;
-    downloadBtn.disabled = true;
-    saveBtn.disabled = true;
-    jgilStudioState.initialized = false;
-    return;
-  } else if (supportMessage) {
-    supportMessage.textContent =
-      "Your browser looks ready for in-browser image generation. This v1 uses a visual placeholder renderer only.";
-  }
 
-  // Mode buttons
-  modeButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const mode = btn.getAttribute("data-mode") || "artwork";
-      jgilStudioState.currentMode = mode;
+    const hasWebGPU = !!navigator.gpu;
+    const hasWebGL = checkWebGLSupport();
 
-      modeButtons.forEach((b) => {
-        const isActive = b === btn;
-        b.classList.toggle("active", isActive);
-        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+    if (!hasWebGPU && !hasWebGL) {
+      setSupportMessage(
+        "Your browser appears to lack WebGL/WebGPU support. This version of J GIL Image Studio may not run correctly here.",
+        true
+      );
+      disableGenerate();
+      return;
+    }
+
+    // Grab all DOM elements we rely on
+    const promptInput = document.getElementById("jgil-prompt");
+    const canvas = document.getElementById("jgil-canvas");
+    const previewEmpty = document.getElementById("jgil-preview-empty");
+    const generateBtn = document.getElementById("jgil-generate-btn");
+    const downloadBtn = document.getElementById("jgil-download-btn");
+    const saveBtn = document.getElementById("jgil-save-btn");
+    const clearBtn = document.getElementById("jgil-clear-btn");
+    const sizeSelect = document.getElementById("jgil-size");
+    const detailSelect = document.getElementById("jgil-detail");
+    const gallery = document.getElementById("jgil-gallery");
+    const modeButtons = Array.from(
+      document.querySelectorAll(".mode-toggle .mode-option")
+    );
+    const presetPills = Array.from(
+      document.querySelectorAll(".preset-pills .preset-pill")
+    );
+
+    // Store references
+    studioState.elements = {
+      support: supportEl || null,
+      promptInput,
+      canvas,
+      previewEmpty,
+      generateBtn,
+      downloadBtn,
+      saveBtn,
+      clearBtn,
+      sizeSelect,
+      detailSelect,
+      gallery,
+      modeButtons,
+      presetPills,
+    };
+
+    // Validate – if key elements are missing, bail gracefully
+    if (!promptInput || !canvas || !generateBtn) {
+      setSupportMessage(
+        "J GIL Image Studio setup error: missing required elements. Please refresh the page.",
+        true
+      );
+      disableGenerate();
+      return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      setSupportMessage(
+        "Unable to initialize drawing context. Your browser may not fully support canvas rendering.",
+        true
+      );
+      disableGenerate();
+      return;
+    }
+    studioState.ctx = ctx;
+
+    // Hook up mode buttons
+    modeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = btn.getAttribute("data-mode") || "artwork";
+        setMode(mode, modeButtons);
       });
     });
-  });
 
-  // Preset pills
-  presetPills.forEach((pill) => {
-    pill.addEventListener("click", () => {
-      const preset = pill.getAttribute("data-preset");
-      if (!preset) return;
-
-      const list = jgilStudioState.selectedPresets;
-      const index = list.indexOf(preset);
-      if (index === -1) {
-        list.push(preset);
-        pill.classList.add("active");
-      } else {
-        list.splice(index, 1);
-        pill.classList.remove("active");
-      }
+    // Hook up preset pills
+    presetPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const preset = pill.getAttribute("data-preset");
+        if (!preset) return;
+        togglePreset(preset, pill);
+      });
     });
-  });
 
-  // Generate
-  generateBtn.addEventListener("click", generateImage);
+    // Generate button
+    generateBtn.addEventListener("click", () => {
+      generateImage();
+    });
 
-  // Download
-  downloadBtn.addEventListener("click", () => {
-    if (!jgilStudioState.hasImage) return;
-    const { canvas } = jgilStudioState.elements;
-    const dataUrl = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
+    // Download PNG
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", () => {
+        if (!studioState.hasImage) return;
+        downloadCurrentImage();
+      });
+    }
+
+    // Save to gallery
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        if (!studioState.hasImage) return;
+        saveToGallery();
+      });
+    }
+
+    // Clear & Try Again
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        clearCanvas();
+      });
+    }
+
+    // Size + detail selects
+    if (sizeSelect) {
+      sizeSelect.addEventListener("change", () => {
+        updateCanvasSizeFromSelect();
+      });
+      updateCanvasSizeFromSelect(); // initialize size
+    }
+    if (detailSelect) {
+      detailSelect.addEventListener("change", () => {
+        studioState.detailLevel = detailSelect.value || "Balanced";
+      });
+      studioState.detailLevel = detailSelect.value || "Balanced";
+    }
+
+    // Initial UI state
+    setMode("artwork", modeButtons);
+    disableActionButtons();
+    showPreviewEmpty(true);
+
+    // Confirm to the user that script is live
+    setSupportMessage(
+      "Image Studio is ready. All rendering happens locally in your browser.",
+      false
+    );
+  }
+
+  // ---------- Helpers ----------
+
+  function checkWebGLSupport() {
+    try {
+      const testCanvas = document.createElement("canvas");
+      const gl =
+        testCanvas.getContext("webgl") ||
+        testCanvas.getContext("experimental-webgl");
+      return !!gl;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setSupportMessage(message, isError) {
+    const el = studioState.elements.support;
+    if (!el) return;
+    el.textContent = message;
+    el.classList.toggle("error", !!isError);
+  }
+
+  function disableGenerate() {
+    const btn = studioState.elements.generateBtn;
+    if (btn) {
+      btn.disabled = true;
+    }
+  }
+
+  function disableActionButtons() {
+    const { downloadBtn, saveBtn } = studioState.elements;
+    if (downloadBtn) downloadBtn.disabled = true;
+    if (saveBtn) saveBtn.disabled = true;
+  }
+
+  function enableActionButtons() {
+    const { downloadBtn, saveBtn } = studioState.elements;
+    if (downloadBtn) downloadBtn.disabled = false;
+    if (saveBtn) saveBtn.disabled = false;
+  }
+
+  function showPreviewEmpty(show) {
+    const { previewEmpty } = studioState.elements;
+    if (!previewEmpty) return;
+    previewEmpty.style.display = show ? "block" : "none";
+  }
+
+  function setMode(mode, modeButtons) {
+    studioState.currentMode = mode === "brand" ? "brand" : "artwork";
+    modeButtons.forEach((btn) => {
+      const btnMode = btn.getAttribute("data-mode");
+      const isActive = btnMode === studioState.currentMode;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function togglePreset(preset, pillEl) {
+    const idx = studioState.selectedPresets.indexOf(preset);
+    if (idx === -1) {
+      studioState.selectedPresets.push(preset);
+      pillEl.classList.add("active");
+      pillEl.setAttribute("aria-pressed", "true");
+    } else {
+      studioState.selectedPresets.splice(idx, 1);
+      pillEl.classList.remove("active");
+      pillEl.setAttribute("aria-pressed", "false");
+    }
+  }
+
+  function updateCanvasSizeFromSelect() {
+    const { sizeSelect, canvas } = studioState.elements;
+    if (!sizeSelect || !canvas) return;
+
+    const val = sizeSelect.value;
+    let width = 1024;
+    let height = 1024;
+
+    if (val === "portrait") {
+      width = 768;
+      height = 1024;
+    } else if (val === "landscape") {
+      width = 1024;
+      height = 768;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    studioState.canvasSize = { width, height };
+
+    // also clear when size changes, but keep prompt
+    clearCanvas(false);
+  }
+
+  // ---------- Core generation ----------
+
+  function generateImage() {
+    const { promptInput, canvas, generateBtn } = studioState.elements;
+    const ctx = studioState.ctx;
+    if (!promptInput || !canvas || !generateBtn || !ctx) return;
+
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+      setSupportMessage(
+        "Add a prompt first – be specific about style, mood, and colors.",
+        true
+      );
+      return;
+    }
+
+    setSupportMessage(
+      "Generating a placeholder visual locally in your browser…",
+      false
+    );
+
+    generateBtn.disabled = true;
+    const originalLabel = generateBtn.textContent;
+    generateBtn.textContent = "Generating…";
+
+    // Ensure canvas size matches selected option
+    updateCanvasSizeFromSelect();
+
+    const options = {
+      mode: studioState.currentMode,
+      presets: [...studioState.selectedPresets],
+      prompt,
+      size: { ...studioState.canvasSize },
+      detail: studioState.detailLevel,
+    };
+
+    // Render immediately (no async needed)
+    renderPlaceholderImage(ctx, options);
+
+    studioState.hasImage = true;
+    showPreviewEmpty(false);
+    enableActionButtons();
+
+    generateBtn.disabled = false;
+    generateBtn.textContent = originalLabel;
+
+    setSupportMessage(
+      "Placeholder image generated. Download or save to the session gallery.",
+      false
+    );
+  }
+
+  function renderPlaceholderImage(ctx, options) {
+    const { width, height } = options.size;
+    const { mode, presets, prompt, detail } = options;
+
+    // Wipe canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Compute a deterministic seed based on prompt
+    const seed = hashString(prompt + "|" + mode + "|" + presets.join(","));
+    const rand = seededRand(seed);
+
+    // Color palettes
+    const artworkPalette = [
+      "#FF6B6B",
+      "#FFD93D",
+      "#6BCB77",
+      "#4D96FF",
+      "#9D4EDD",
+    ];
+    const brandPalette = ["#F4F4F6", "#2B2B2B", "#4A90E2", "#D64545", "#27AE60"];
+
+    let basePalette = mode === "brand" ? brandPalette : artworkPalette;
+
+    const isMonochrome = presets.includes("monochrome");
+    const isSoftGradient = presets.includes("soft-gradient");
+    const isBoldPoster = presets.includes("bold-poster");
+    const isIconOnly = presets.includes("icon-only");
+    const isWordmark = presets.includes("clean-wordmark");
+
+    if (isMonochrome) {
+      basePalette = mode === "brand" ? ["#2B2B2B", "#F4F4F6"] : ["#111827", "#E5E7EB"];
+    }
+
+    // Background layer
+    if (isSoftGradient) {
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      const c1 = basePalette[Math.floor(rand() * basePalette.length)];
+      const c2 = basePalette[Math.floor(rand() * basePalette.length)];
+      grad.addColorStop(0, c1);
+      grad.addColorStop(1, c2);
+      ctx.fillStyle = grad;
+    } else {
+      const bgColor =
+        basePalette[Math.floor(rand() * basePalette.length)] || "#111827";
+      ctx.fillStyle = bgColor;
+    }
+    ctx.fillRect(0, 0, width, height);
+
+    // Mild noise / detail based on detail level
+    const detailFactor = detail === "High Detail" ? 90 : detail === "Fast" ? 25 : 50;
+    ctx.globalAlpha = 0.18;
+    for (let i = 0; i < detailFactor; i++) {
+      ctx.fillStyle = basePalette[Math.floor(rand() * basePalette.length)];
+      const w = (width * (0.03 + rand() * 0.15));
+      const h = (height * (0.03 + rand() * 0.15));
+      const x = rand() * (width - w);
+      const y = rand() * (height - h);
+      ctx.fillRect(x, y, w, h);
+    }
+    ctx.globalAlpha = 1;
+
+    // Core composition
+    if (mode === "brand") {
+      drawBrandComposition(ctx, options, rand, basePalette);
+    } else {
+      drawArtworkComposition(ctx, options, rand, basePalette, isBoldPoster);
+    }
+
+    // Debug label (small, subtle text)
+    ctx.save();
+    ctx.font = `${Math.max(10, Math.round(width * 0.02))}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+    ctx.fillStyle = "rgba(248, 250, 252, 0.8)";
+    ctx.textBaseline = "top";
+
+    const debugLines = [
+      `Mode: ${mode}`,
+      `Presets: ${presets.length ? presets.join(", ") : "none"}`,
+      `Detail: ${detail}`,
+    ];
+    debugLines.forEach((line, idx) => {
+      ctx.fillText(line, width * 0.03, height * (0.03 + idx * 0.03));
+    });
+
+    // Tiny prompt hash bottom-right
+    const shortHash = Math.abs(hashString(prompt)).toString(16).slice(0, 6);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`#${shortHash}`, width * 0.97, height * 0.96);
+
+    ctx.restore();
+  }
+
+  function drawBrandComposition(ctx, options, rand, palette) {
+    const { width, height } = options.size;
+    const { presets } = options;
+
+    const margin = width * 0.12;
+    const boxWidth = width - margin * 2;
+    const boxHeight = height * 0.32;
+    const boxX = margin;
+    const boxY = height * 0.34;
+
+    // Card background
+    ctx.save();
+    ctx.roundRect(boxX, boxY, boxWidth, boxHeight, width * 0.02);
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.fill();
+    ctx.restore();
+
+    const iconSize = Math.min(boxHeight * 0.65, boxWidth * 0.25);
+    const iconX = boxX + boxWidth * 0.12;
+    const iconY = boxY + boxHeight / 2;
+
+    const primaryColor = palette[Math.floor(rand() * palette.length)] || "#F97316";
+    const accentColor = palette[Math.floor(rand() * palette.length)] || "#FDBA74";
+
+    // Icon
+    if (presets.includes("icon-only")) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(iconX, iconY, iconSize / 2, 0, Math.PI * 2);
+      ctx.fillStyle = primaryColor;
+      ctx.fill();
+      ctx.lineWidth = Math.max(2, iconSize * 0.06);
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.95)";
+      ctx.stroke();
+      ctx.restore();
+    } else {
+      ctx.save();
+      const radius = iconSize * 0.18;
+      ctx.roundRect(
+        iconX - iconSize / 2,
+        iconY - iconSize / 2,
+        iconSize,
+        iconSize * 0.7,
+        radius
+      );
+      ctx.fillStyle = primaryColor;
+      ctx.fill();
+
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(
+        iconX - iconSize / 2,
+        iconY - iconSize / 2 + iconSize * 0.42,
+        iconSize,
+        iconSize * 0.28
+      );
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // Wordmark
+    if (!presets.includes("icon-only")) {
+      ctx.save();
+      const textAreaX = iconX + iconSize * 0.7;
+      const textAreaY = boxY + boxHeight * 0.3;
+      const textAreaW = boxWidth - (textAreaX - boxX) - boxWidth * 0.08;
+
+      ctx.fillStyle = "rgba(248, 250, 252, 0.96)";
+      ctx.fillRect(
+        textAreaX,
+        textAreaY,
+        textAreaW,
+        Math.max(12, boxHeight * 0.18)
+      );
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.96)";
+      ctx.font = `${Math.max(12, Math.round(width * 0.026))}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      ctx.fillText("BRAND TITLE", textAreaX + textAreaW / 2, textAreaY + boxHeight * 0.09);
+
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = "rgba(148, 163, 184, 0.9)";
+      const lineHeight = boxHeight * 0.05;
+      const lineYStart = textAreaY + boxHeight * 0.22;
+      for (let i = 0; i < 3; i++) {
+        const lw = textAreaW * (0.6 + 0.2 * rand());
+        ctx.fillRect(
+          textAreaX,
+          lineYStart + i * (lineHeight + boxHeight * 0.02),
+          lw,
+          lineHeight * 0.5
+        );
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    } else {
+      // If icon-only, add subtle tagline bar under icon
+      ctx.save();
+      const barWidth = boxWidth * 0.55;
+      const barHeight = boxHeight * 0.12;
+      const barX = boxX + (boxWidth - barWidth) / 2;
+      const barY = boxY + boxHeight * 0.72;
+      ctx.roundRect(barX, barY, barWidth, barHeight, barHeight / 2);
+      ctx.fillStyle = "rgba(248, 250, 252, 0.14)";
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function drawArtworkComposition(ctx, options, rand, palette, isBoldPoster) {
+    const { width, height } = options.size;
+
+    // big central circle or orb
+    const orbRadius = Math.min(width, height) * 0.22;
+    const orbX = width * 0.5;
+    const orbY = height * 0.48;
+
+    ctx.save();
+    const orbGrad = ctx.createRadialGradient(
+      orbX,
+      orbY,
+      orbRadius * 0.2,
+      orbX,
+      orbY,
+      orbRadius
+    );
+    const g1 = palette[Math.floor(rand() * palette.length)] || "#F97316";
+    const g2 = palette[Math.floor(rand() * palette.length)] || "#22D3EE";
+    orbGrad.addColorStop(0, "rgba(248, 250, 252, 0.98)");
+    orbGrad.addColorStop(0.3, g1);
+    orbGrad.addColorStop(1, g2);
+    ctx.fillStyle = orbGrad;
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, orbRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = Math.max(2, orbRadius * 0.07);
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, orbRadius * 1.07, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // poster frame at bottom if bold poster
+    if (isBoldPoster) {
+      ctx.save();
+      const frameHeight = height * 0.22;
+      const frameY = height - frameHeight - height * 0.06;
+      const frameMargin = width * 0.09;
+      const frameWidth = width - frameMargin * 2;
+
+      ctx.roundRect(
+        frameMargin,
+        frameY,
+        frameWidth,
+        frameHeight,
+        width * 0.03
+      );
+      ctx.fillStyle = "rgba(15, 23, 42, 0.94)";
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(248, 250, 252, 0.98)";
+      ctx.font = `${Math.max(
+        18,
+        Math.round(width * 0.04)
+      )}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+      ctx.textBaseline = "top";
+      ctx.textAlign = "left";
+
+      const titleX = frameMargin + frameWidth * 0.08;
+      const titleY = frameY + frameHeight * 0.18;
+      ctx.fillText("POSTER TITLE", titleX, titleY);
+
+      ctx.globalAlpha = 0.4;
+      ctx.fillStyle = "rgba(148, 163, 184, 0.9)";
+      const lineH = frameHeight * 0.12;
+      const lineY = titleY + frameHeight * 0.3;
+      for (let i = 0; i < 3; i++) {
+        const lw = frameWidth * (0.4 + 0.25 * rand());
+        ctx.fillRect(titleX, lineY + i * (lineH * 0.65), lw, lineH * 0.4);
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+  }
+
+  // ---------- Download, gallery, clear ----------
+
+  function downloadCurrentImage() {
+    const { canvas } = studioState.elements;
+    if (!canvas) return;
+    const dataURL = canvas.toDataURL("image/png");
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    link.href = dataUrl;
+    const link = document.createElement("a");
+    link.href = dataURL;
     link.download = `jgil-image-${timestamp}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  });
+  }
 
-  // Save to gallery
-  saveBtn.addEventListener("click", () => {
-    if (!jgilStudioState.hasImage) return;
-    const { canvas, ctx, gallery, previewEmpty } = jgilStudioState.elements;
-    if (!gallery || !ctx) return;
+  function saveToGallery() {
+    const { canvas, gallery } = studioState.elements;
+    if (!canvas || !gallery) return;
 
-    const dataUrl = canvas.toDataURL("image/png");
-
-    const empty = gallery.querySelector(".gallery-empty");
-    if (empty) {
-      empty.remove();
-    }
-
+    const dataURL = canvas.toDataURL("image/png");
     const item = document.createElement("button");
     item.type = "button";
     item.className = "gallery-item";
+    item.setAttribute("aria-label", "Load saved image into preview");
 
     const img = document.createElement("img");
-    img.src = dataUrl;
-    img.alt = "Saved image from J GIL Image Studio";
-
+    img.src = dataURL;
+    img.alt = "Saved placeholder image";
     item.appendChild(img);
 
     item.addEventListener("click", () => {
-      const imgObj = new Image();
-      imgObj.onload = () => {
+      const ctx = studioState.ctx;
+      if (!ctx) return;
+      const imgEl = new Image();
+      imgEl.onload = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
-        if (previewEmpty) {
-          previewEmpty.style.display = "none";
-        }
-        jgilStudioState.hasImage = true;
-        jgilStudioState.elements.downloadBtn.disabled = false;
-        jgilStudioState.elements.saveBtn.disabled = false;
+        ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+        studioState.hasImage = true;
+        showPreviewEmpty(false);
+        enableActionButtons();
+        setSupportMessage(
+          "Loaded a saved image from this session back into the preview.",
+          false
+        );
       };
-      imgObj.src = dataUrl;
+      imgEl.src = dataURL;
     });
 
+    // Remove empty text if present
+    const empty = gallery.querySelector(".gallery-empty");
+    if (empty) empty.remove();
+
     gallery.appendChild(item);
-  });
-
-  // Clear & Try Again
-  clearBtn.addEventListener("click", () => {
-    const { canvas, ctx, previewEmpty, downloadBtn, saveBtn } =
-      jgilStudioState.elements;
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (previewEmpty) {
-      previewEmpty.style.display = "";
-    }
-    downloadBtn.disabled = true;
-    saveBtn.disabled = true;
-    jgilStudioState.hasImage = false;
-  });
-
-  jgilStudioState.initialized = true;
-}
-
-function generateImage() {
-  if (!jgilStudioState.initialized) return;
-
-  const {
-    promptInput,
-    canvas,
-    ctx,
-    previewEmpty,
-    supportMessage,
-    generateBtn,
-    sizeSelect,
-    detailSelect,
-    downloadBtn,
-    saveBtn,
-  } = jgilStudioState.elements;
-
-  if (!ctx) return;
-
-  const prompt = (promptInput.value || "").trim();
-  if (!prompt) {
-    if (supportMessage) {
-      supportMessage.textContent =
-        "Please enter a prompt first. Describe the vibe, colors, and what should stand out.";
-    }
-    return;
-  }
-
-  if (supportMessage) {
-    supportMessage.textContent = "";
-  }
-
-  const originalLabel =
-    generateBtn.dataset.originalLabel || generateBtn.textContent;
-  generateBtn.dataset.originalLabel = originalLabel;
-  generateBtn.disabled = true;
-  generateBtn.textContent = "Generating…";
-
-  // Set canvas size
-  const size = sizeSelect ? sizeSelect.value : "square";
-  let width = 1024;
-  let height = 1024;
-
-  switch (size) {
-    case "portrait":
-      width = 768;
-      height = 1024;
-      break;
-    case "landscape":
-      width = 1024;
-      height = 768;
-      break;
-    case "square":
-    default:
-      width = 1024;
-      height = 1024;
-      break;
-  }
-
-  canvas.width = width;
-  canvas.height = height;
-
-  const detail = detailSelect ? detailSelect.value : "balanced";
-
-  const options = {
-    width,
-    height,
-    mode: jgilStudioState.currentMode || "artwork",
-    presets: [...jgilStudioState.selectedPresets],
-    prompt,
-    detail,
-  };
-
-  // Simulate a small generation delay visually but still snappy
-  window.requestAnimationFrame(() => {
-    renderPlaceholderImage(ctx, options);
-
-    if (previewEmpty) {
-      previewEmpty.style.display = "none";
-    }
-
-    jgilStudioState.hasImage = true;
-    downloadBtn.disabled = false;
-    saveBtn.disabled = false;
-
-    generateBtn.disabled = false;
-    generateBtn.textContent = originalLabel;
-  });
-}
-
-function renderPlaceholderImage(ctx, options) {
-  const { width, height, mode, presets, prompt, detail } = options;
-
-  // Clear canvas
-  ctx.clearRect(0, 0, width, height);
-
-  // Determine palette
-  const isMonochrome = presets.includes("monochrome");
-  const hasSoftGradient = presets.includes("soft-gradient");
-  const isBoldPoster = presets.includes("bold-poster");
-  const isIconOnly = presets.includes("icon-only");
-  const isCleanWordmark = presets.includes("clean-wordmark");
-
-  let bgStart = "#020617";
-  let bgEnd = "#020617";
-  let accent1 = "#f97316";
-  let accent2 = "#22c55e";
-  let accent3 = "#38bdf8";
-
-  if (mode === "brand") {
-    bgStart = "#020617";
-    bgEnd = "#020617";
-    accent1 = "#f97316";
-    accent2 = "#e5e7eb";
-    accent3 = "#22c55e";
-  } else {
-    bgStart = "#020617";
-    bgEnd = "#020617";
-    accent1 = "#f97316";
-    accent2 = "#38bdf8";
-    accent3 = "#a855f7";
-  }
-
-  if (isMonochrome) {
-    accent1 = "#f9fafb";
-    accent2 = "#9ca3af";
-    accent3 = "#6b7280";
-  }
-
-  // Background shape / gradient
-  if (hasSoftGradient) {
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, bgStart);
-    gradient.addColorStop(0.45, mode === "brand" ? "#020617" : "#020617");
-    gradient.addColorStop(1, bgEnd);
-    ctx.fillStyle = gradient;
-  } else {
-    ctx.fillStyle = bgStart;
-  }
-
-  ctx.fillRect(0, 0, width, height);
-
-  // Deterministic seed from prompt + settings
-  const seedString = [
-    prompt,
-    mode,
-    presets.sort().join(","),
-    detail,
-    width,
-    height,
-  ].join("|");
-  const seed = hashString(seedString);
-
-  function seededRand(iMultiplier) {
-    const x = seed ^ (iMultiplier * 374761393);
-    const t = (x ^ (x >>> 13)) * 1274126177;
-    return ((t ^ (t >>> 16)) >>> 0) / 4294967295;
-  }
-
-  // Draw layout based on mode
-  if (mode === "brand") {
-    // Big central "logo" block
-    const logoW = width * 0.55;
-    const logoH = height * (isIconOnly ? 0.35 : 0.22);
-    const logoX = (width - logoW) / 2;
-    const logoY = height * 0.3;
-
-    ctx.fillStyle = isMonochrome ? "#020617" : "#020617";
-    ctx.globalAlpha = 0.95;
-    ctx.fillRect(logoX, logoY, logoW, logoH);
-
-    // Logo border
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = isBoldPoster ? 6 : 3;
-    ctx.strokeStyle = isMonochrome ? accent2 : accent1;
-    ctx.strokeRect(logoX, logoY, logoW, logoH);
-
-    // Inner icon or wordmark
-    if (isIconOnly) {
-      const iconSize = Math.min(logoW, logoH) * 0.4;
-      const iconX = logoX + logoW / 2;
-      const iconY = logoY + logoH / 2;
-
-      ctx.beginPath();
-      ctx.arc(iconX, iconY, iconSize / 2, 0, Math.PI * 2);
-      ctx.fillStyle = isMonochrome ? accent2 : accent1;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(iconX, iconY, iconSize * 0.28, 0, Math.PI * 2);
-      ctx.fillStyle = isMonochrome ? "#020617" : bgStart;
-      ctx.fill();
-    } else {
-      ctx.fillStyle = isMonochrome ? accent2 : accent1;
-      ctx.font = `${Math.floor(logoH * 0.35)}px system-ui`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      const label = isCleanWordmark ? "WORDMARK" : "BRAND";
-      ctx.fillText(label, logoX + logoW / 2, logoY + logoH / 2);
-    }
-
-    // Baseline bar
-    ctx.fillStyle = isMonochrome ? accent3 : accent2;
-    const barY = logoY + logoH + height * 0.08;
-    ctx.globalAlpha = 0.7;
-    ctx.fillRect(
-      width * 0.18,
-      barY,
-      width * 0.64,
-      Math.max(4, height * 0.01)
+    setSupportMessage(
+      "Image saved to this session’s gallery. It will clear if you refresh the page.",
+      false
     );
-    ctx.globalAlpha = 1;
-  } else {
-    // Artwork mode: layered shapes
-    const shapeCount = isBoldPoster ? 8 : 5;
+  }
 
-    for (let i = 0; i < shapeCount; i++) {
-      const r = seededRand(i + 1);
-      const r2 = seededRand(i + 37);
-      const r3 = seededRand(i + 91);
+  function clearCanvas(clearSupportMessage = true) {
+    const { canvas } = studioState.elements;
+    const ctx = studioState.ctx;
+    if (!canvas || !ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    studioState.hasImage = false;
+    disableActionButtons();
+    showPreviewEmpty(true);
+    if (clearSupportMessage) {
+      setSupportMessage(
+        "Canvas cleared. Adjust your prompt or settings and generate again.",
+        false
+      );
+    }
+  }
 
-      const x = r * width;
-      const y = r2 * height;
-      const w = (0.25 + r3 * 0.4) * width * (i % 2 === 0 ? 0.35 : 0.2);
-      const h = (0.25 + r * 0.4) * height * (i % 2 === 0 ? 0.22 : 0.18);
+  // ---------- Deterministic randomness helpers ----------
 
-      const rotation = (seededRand(i + 101) - 0.5) * (Math.PI / 5);
+  function seededRand(seed) {
+    let x = seed;
+    return function () {
+      // Mulberry32-ish
+      x |= 0;
+      x = (x + 0x6d2b79f5) | 0;
+      let t = Math.imul(x ^ (x >>> 15), 1 | x);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
 
-      const colorChoice = i % 3;
-      if (colorChoice === 0) {
-        ctx.fillStyle = accent1;
-      } else if (colorChoice === 1) {
-        ctx.fillStyle = accent2;
-      } else {
-        ctx.fillStyle = accent3;
+  function hashString(str) {
+    let hash = 0;
+    const input = String(str || "");
+    for (let i = 0; i < input.length; i++) {
+      hash = (hash * 31 + input.charCodeAt(i)) | 0;
+    }
+    return hash | 0;
+  }
+
+  // Polyfill for roundRect if missing (older browsers)
+  if (CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function (
+      x,
+      y,
+      w,
+      h,
+      r
+    ) {
+      if (w < 0) {
+        x += w;
+        w = -w;
       }
-
-      ctx.globalAlpha = hasSoftGradient ? 0.55 : 0.75;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rotation);
-      ctx.fillRect(-w / 2, -h / 2, w, h);
-      ctx.restore();
-    }
-
-    ctx.globalAlpha = 1;
-
-    // Central circle focal point
-    const circleRadius = Math.min(width, height) * 0.12;
-    ctx.beginPath();
-    ctx.arc(width * 0.55, height * 0.45, circleRadius, 0, Math.PI * 2);
-    ctx.fillStyle = bgStart;
-    ctx.fill();
-
-    ctx.lineWidth = isBoldPoster ? 6 : 4;
-    ctx.strokeStyle = accent1;
-    ctx.stroke();
-
-    // Big title bar if bold poster
-    if (isBoldPoster) {
-      const barHeight = height * 0.12;
-      const barY = height * 0.72;
-      ctx.fillStyle = "#020617";
-      ctx.fillRect(0, barY, width, barHeight);
-
-      ctx.fillStyle = accent1;
-      ctx.font = `${Math.floor(barHeight * 0.5)}px system-ui`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("POSTER MOCK", width / 2, barY + barHeight / 2);
-    }
+      if (h < 0) {
+        y += h;
+        h = -h;
+      }
+      if (!r) {
+        r = 0;
+      }
+      if (typeof r === "number") {
+        r = { tl: r, tr: r, br: r, bl: r };
+      } else {
+        const defaultR = { tl: 0, tr: 0, br: 0, bl: 0 };
+        for (const side in defaultR) {
+          r[side] = r[side] || defaultR[side];
+        }
+      }
+      this.beginPath();
+      this.moveTo(x + r.tl, y);
+      this.lineTo(x + w - r.tr, y);
+      this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+      this.lineTo(x + w, y + h - r.br);
+      this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+      this.lineTo(x + r.bl, y + h);
+      this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+      this.lineTo(x, y + r.tl);
+      this.quadraticCurveTo(x, y, x + r.tl, y);
+      this.closePath();
+      return this;
+    };
   }
-
-  // Overlay debug text (mode + presets)
-  const debugText = [
-    mode === "brand" ? "MODE: BRAND" : "MODE: ARTWORK",
-    presets.length ? `PRESETS: ${presets.join(", ")}` : "PRESETS: none",
-    `DETAIL: ${detail.toUpperCase()}`,
-  ];
-
-  ctx.font = `${Math.max(10, Math.floor(height * 0.02))}px system-ui`;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillStyle = "rgba(148, 163, 184, 0.9)";
-
-  debugText.forEach((line, i) => {
-    ctx.fillText(line, width * 0.04, height * 0.04 + i * (height * 0.03));
-  });
-
-  // Tiny prompt hash in bottom-right corner
-  ctx.textAlign = "right";
-  ctx.textBaseline = "bottom";
-  ctx.fillStyle = "rgba(148, 163, 184, 0.6)";
-  const shortHash = hashString(prompt).toString(16).slice(0, 8);
-  ctx.fillText(`#${shortHash}`, width * 0.96, height * 0.96);
-}
-
-function hashString(str) {
-  let hash = 0;
-  const input = String(str || "");
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash * 31 + input.charCodeAt(i)) | 0;
-  }
-  return hash >>> 0;
-}
+})();

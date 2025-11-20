@@ -1,6 +1,8 @@
 /* ---------------------------------------------------------
-   RESET & BASE
+   J GIL Brothers – Base Styles (v1)
 --------------------------------------------------------- */
+
+/* RESET & BASE */
 
 *,
 *::before,
@@ -22,9 +24,15 @@ body {
   background: #ffffff;
 }
 
-/* ---------------------------------------------------------
-   GLOBAL LAYOUT
---------------------------------------------------------- */
+/* IMAGES */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* GLOBAL CONTAINER */
 
 .container {
   max-width: 1120px;
@@ -32,10 +40,10 @@ body {
   padding: 2rem 1rem;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+/* LINKS */
+
+a {
+  color: inherit;
 }
 
 /* ---------------------------------------------------------
@@ -45,34 +53,36 @@ img {
 .site-header {
   background: #ffffff;
   border-bottom: 1px solid #e5e5e5;
-  padding: 1.25rem 1rem;
+}
+
+.site-header .container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .site-header-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1120px;
-  margin: 0 auto;
+  gap: 1.5rem;
 }
 
 .site-logo {
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 750;
   text-decoration: none;
-  color: #000000;
 }
 
 .site-nav {
   display: flex;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {
-  text-decoration: none;
   font-size: 0.9rem;
-  color: #222;
-  opacity: 0.85;
+  text-decoration: none;
+  opacity: 0.8;
 }
 
 .nav-link:hover {
@@ -80,7 +90,8 @@ img {
 }
 
 .nav-link-active {
-  font-weight: bold;
+  font-weight: 700;
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------
@@ -93,35 +104,41 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: 2.5rem;
   align-items: center;
 }
 
 .hero-kicker {
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.7;
   margin-bottom: 0.5rem;
 }
 
 .hero-title {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 800;
   margin-bottom: 1rem;
 }
 
 .hero-subtitle {
-  max-width: 540px;
+  max-width: 520px;
   opacity: 0.85;
   margin-bottom: 1.75rem;
 }
 
 .hero-cta-row {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hero-media .hero-image {
+  border-radius: 1rem;
+  border: 1px solid #e3e3e3;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
 }
 
 /* ---------------------------------------------------------
@@ -133,34 +150,39 @@ img {
 .btn-link {
   display: inline-block;
   padding: 0.75rem 1.4rem;
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .btn-primary {
-  background: #000;
-  color: #fff;
+  background: #000000;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
 }
 
 .btn-secondary {
   background: #ffffff;
-  border: 1px solid #222;
-  color: #222;
+  border: 1px solid #111;
+  color: #111;
 }
 
 .btn-secondary:hover {
-  background: #f3f3f3;
+  background: #f5f5f5;
 }
 
 .btn-link {
-  color: #0070f3;
+  color: #0b63ff;
   padding: 0.25rem 0;
 }
 
 /* ---------------------------------------------------------
-   SECTIONS
+   GENERIC SECTIONS
 --------------------------------------------------------- */
 
 .home-section {
@@ -168,8 +190,8 @@ img {
 }
 
 .home-section-alt {
-  background: #fafafa;
   padding: 3.5rem 0;
+  background: #fafafa;
 }
 
 .section-header {
@@ -185,64 +207,89 @@ img {
 
 .section-subtitle {
   font-size: 1rem;
-  opacity: 0.75;
-  max-width: 700px;
+  opacity: 0.76;
+  max-width: 720px;
   margin: 0 auto;
 }
 
+.section-kicker {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.section-body {
+  font-size: 0.98rem;
+  margin-bottom: 1.2rem;
+  opacity: 0.9;
+}
+
 /* ---------------------------------------------------------
-   FEATURE GRID
+   FEATURES GRID
 --------------------------------------------------------- */
 
 .feature-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .feature-card {
   background: #ffffff;
   border: 1px solid #e5e5e5;
+  border-radius: 0.9rem;
   padding: 1.5rem;
-  border-radius: 0.8rem;
 }
 
 .feature-card h3 {
   font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.feature-card p {
+  font-size: 0.94rem;
+  opacity: 0.85;
+}
+
+.muted {
+  opacity: 0.7;
+  font-size: 0.86rem;
 }
 
 /* ---------------------------------------------------------
-   ABOUT SECTION
+   ABOUT GRID
 --------------------------------------------------------- */
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: 2.5rem;
   align-items: center;
 }
 
-.about-text .section-body {
-  margin-bottom: 1.25rem;
-  opacity: 0.9;
+.about-media .about-image {
+  border-radius: 1rem;
+  border: 1px solid #e3e3e3;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.07);
 }
 
 /* ---------------------------------------------------------
-   BLOG PREVIEW CARD
+   BLOG PREVIEW
 --------------------------------------------------------- */
 
 .blog-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
-  margin-top: 2rem;
+  margin-top: 2.25rem;
   padding: 2rem;
-  border: 1px solid #e5e5e5;
   border-radius: 1rem;
-  background: #fff;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
 }
 
 .blog-card-title {
@@ -251,10 +298,16 @@ img {
   margin-bottom: 0.75rem;
 }
 
+.blog-card-text {
+  font-size: 0.98rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
 .blog-card-meta {
   font-size: 0.8rem;
-  opacity: 0.75;
-  margin: 0.5rem 0;
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
 }
 
 /* ---------------------------------------------------------
@@ -262,37 +315,48 @@ img {
 --------------------------------------------------------- */
 
 .site-footer {
-  background: #111;
-  color: #eee;
+  background: #111111;
+  color: #f0f0f0;
   padding: 3rem 0;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2.2rem;
 }
 
 .footer-title {
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.footer-heading {
+  font-size: 0.98rem;
+  font-weight: 600;
   margin-bottom: 0.75rem;
 }
 
 .footer-text {
-  font-size: 0.9rem;
-  opacity: 0.85;
-  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  opacity: 0.86;
+  margin-bottom: 0.6rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding-left: 0;
 }
 
 .footer-links li {
-  list-style: none;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .footer-links a {
-  color: #fff;
+  color: #f0f0f0;
   text-decoration: none;
+  font-size: 0.88rem;
   opacity: 0.8;
 }
 
@@ -308,8 +372,8 @@ img {
 
 .footer-meta {
   margin-top: 1rem;
+  font-size: 0.78rem;
   opacity: 0.7;
-  font-size: 0.8rem;
 }
 
 /* ---------------------------------------------------------
@@ -320,6 +384,20 @@ img {
   .hero-grid,
   .about-grid,
   .blog-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero {
+    padding-top: 2.5rem;
+  }
+
+  .site-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
   }
 }

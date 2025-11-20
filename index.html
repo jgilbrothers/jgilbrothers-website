@@ -2,365 +2,136 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>J GIL Image Studio – AI Tools | J GIL Brothers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="J GIL Image Studio – a free, in-browser image generator by J GIL Brothers. No logins, no credits, and everything runs locally in your browser.">
+  <title>J GIL Brothers | AI Branding Platform for Creators</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="J GIL Brothers is an AI-powered branding and content studio building simple, practical tools for creators who don’t have time or money to waste.">
   <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="logo">
-        <span class="logo-mark">J</span>
+    <div class="site-header-inner">
+      <a href="/index.html" class="logo-link">
         <span class="logo-text">J GIL Brothers</span>
       </a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/tools.html" class="nav-link nav-link-active">AI Tools</a>
-        <a href="/studio.html" class="nav-link">Studio / Services</a>
-        <a href="/donate.html" class="nav-link">Support the Vision</a>
-        <a href="/about.html" class="nav-link">About &amp; Contact</a>
+      <nav class="site-nav">
+        <a href="/index.html" class="nav-link nav-link-active">Home</a>
+        <a href="/tools.html" class="nav-link">Free AI Tools</a>
+        <a href="#support" class="nav-link">Support the Vision</a>
+        <a href="#about" class="nav-link">About &amp; Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="site-main">
-    <!-- Intro Bar -->
-    <section class="ai-tools-intro">
-      <div class="container ai-tools-intro-inner">
-        <div>
-          <p class="eyebrow">J GIL AI Tools</p>
-          <h1 class="page-title">J GIL Image Studio</h1>
-        </div>
-        <p class="ai-tools-tagline">
-          Free, browser-native tools for bold creators. This page is where new experiments land first.
-        </p>
-      </div>
-    </section>
-
-    <!-- Hero -->
-    <section class="image-studio-hero" id="jgil-hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow hero-eyebrow">Free In-Browser Image Generator</p>
-          <h2 class="hero-title">J GIL Image Studio</h2>
-          <p class="hero-subtitle">
-            A lightweight, first-version image playground that runs directly in your browser.
-            No logins. No credits. No data leaving the page. Just you, a prompt, and a canvas.
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow">For creators, parents &amp; builders</p>
+          <h1>We’re building simple, practical image design tools for people who don’t have time or money to waste.</h1>
+          <p class="hero-lede">
+            J GIL Brothers is a small, creator-led studio experimenting with AI, automation, and story-driven branding —
+            starting right here with free, in-browser tools and a community-first approach.
           </p>
-          <ul class="hero-bullets">
-            <li><strong>Two Modes:</strong> Artwork + Minimalist Brand</li>
-            <li><strong>Free &amp; Local:</strong> Everything stays in your browser</li>
-            <li><strong>Creator-First:</strong> No ads, no external branding</li>
-          </ul>
           <div class="hero-actions">
-            <a href="#jgil-generator" class="btn primary-btn">Start Creating</a>
-            <button type="button" class="hero-link" onclick="document.getElementById('jgil-how')?.scrollIntoView({ behavior: 'smooth' });">
-              Learn how it works ↓
-            </button>
+            <a href="/tools.html" class="button button-primary">Try the Image Studio</a>
+            <a href="#support" class="button button-ghost">Support the Vision</a>
           </div>
         </div>
-        <div class="hero-visual">
-          <div class="hero-preview-shell">
-            <div class="hero-preview-header">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            </div>
-            <div class="hero-preview-body">
-              <div class="hero-preview-label">Live preview</div>
-              <div class="hero-preview-placeholder">
-                <span class="hero-preview-tag">Runs locally in your browser</span>
-                <span class="hero-preview-main">No external AI calls yet – this is your visual sandbox.</span>
-              </div>
-            </div>
+        <div class="hero-art">
+          <div class="hero-art-card">
+            <p class="hero-quote">
+              “They’re not perfect yet… but they’re worth the work.”
+            </p>
+            <p class="hero-credit">– J GIL Brothers</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Generator -->
-    <section class="image-studio-generator" id="jgil-generator">
-      <div class="container">
-        <header class="section-header">
-          <h2>Generate a Placeholder Image</h2>
-          <p>
-            This first version uses an in-browser placeholder renderer. It reacts to your mode, presets,
-            and prompt to give you a visual mockup while we prepare the full diffusion backend.
-          </p>
-        </header>
-
-        <div class="generator-grid" aria-label="J GIL Image Studio generator">
-          <!-- Controls -->
-          <div class="generator-controls">
-            <div class="field-group">
-              <label for="jgil-prompt" class="field-label">Prompt</label>
-              <textarea
-                id="jgil-prompt"
-                class="prompt-input"
-                rows="4"
-                placeholder="Example: bold neon poster for a late-night creator studio, sharp typography, deep blues, electric orange accents"
-              ></textarea>
-              <p class="field-help">
-                Be specific about style, mood, colors, and what should feel dominant. Think: “poster, logo, icon,” not just “cool picture.”
-              </p>
-            </div>
-
-            <div class="field-group">
-              <div class="field-label">Mode</div>
-              <div class="mode-toggle" role="group" aria-label="Image mode">
-                <button
-                  type="button"
-                  class="mode-option active"
-                  data-mode="artwork"
-                  aria-pressed="true"
-                >
-                  Artwork Mode
-                </button>
-                <button
-                  type="button"
-                  class="mode-option"
-                  data-mode="brand"
-                  aria-pressed="false"
-                >
-                  Brand Mode
-                </button>
-              </div>
-              <p class="field-help">
-                <strong>Artwork:</strong> posters, scenes, experimental visuals. <strong>Brand:</strong> simple, logo-like layouts.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <div class="field-label">Style presets</div>
-              <div class="preset-pills">
-                <button type="button" class="preset-pill" data-preset="bold-poster">Bold Poster</button>
-                <button type="button" class="preset-pill" data-preset="clean-wordmark">Clean Wordmark</button>
-                <button type="button" class="preset-pill" data-preset="icon-only">Icon-Only</button>
-                <button type="button" class="preset-pill" data-preset="monochrome">Monochrome</button>
-                <button type="button" class="preset-pill" data-preset="soft-gradient">Soft Gradient</button>
-              </div>
-              <p class="field-help">
-                Presets can be combined. Try <em>Bold Poster</em> + <em>Soft Gradient</em> or <em>Icon-Only</em> + <em>Monochrome</em>.
-              </p>
-            </div>
-
-            <div class="field-grid">
-              <div class="field-group">
-                <label for="jgil-size" class="field-label">Canvas size</label>
-                <select id="jgil-size" class="select-input">
-                  <option value="square" selected>Square (1024×1024)</option>
-                  <option value="portrait">Portrait (768×1024)</option>
-                  <option value="landscape">Landscape (1024×768)</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label for="jgil-detail" class="field-label">Detail level</label>
-                <select id="jgil-detail" class="select-input">
-                  <option value="fast">Fast</option>
-                  <option value="balanced" selected>Balanced</option>
-                  <option value="high">High Detail</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <button type="button" id="jgil-generate-btn" class="btn primary-btn">
-                Generate Image
-              </button>
-              <p class="field-help">
-                Images are generated directly in this browser tab. Nothing is uploaded or stored on a server.
-              </p>
-              <p id="jgil-support-message" class="field-help support-message" role="status" aria-live="polite"></p>
-            </div>
-          </div>
-
-          <!-- Preview + Gallery -->
-          <div class="generator-preview-panel">
-            <div class="preview-shell">
-              <canvas
-                id="jgil-canvas"
-                class="preview-canvas"
-                width="512"
-                height="512"
-                aria-label="Generated image preview"
-              ></canvas>
-              <p id="jgil-preview-empty" class="preview-empty">
-                No image yet. Enter a prompt and hit <strong>Generate Image</strong>.
-              </p>
-              <div class="preview-actions">
-                <button type="button" id="jgil-download-btn" class="btn secondary-btn" disabled>
-                  Download PNG
-                </button>
-                <button type="button" id="jgil-save-btn" class="btn secondary-btn" disabled>
-                  Save to Gallery
-                </button>
-                <button type="button" id="jgil-clear-btn" class="btn ghost-btn">
-                  Clear &amp; Try Again
-                </button>
-              </div>
-            </div>
-
-            <div class="session-gallery">
-              <div class="session-gallery-header">
-                <h3 class="session-gallery-title">Session Gallery</h3>
-                <p class="session-gallery-subtitle">
-                  Saved images live only in this browser session. Refreshing will clear them.
-                </p>
-              </div>
-              <div id="jgil-gallery" class="gallery-grid" aria-label="Saved image gallery">
-                <p class="gallery-empty">No saved images yet.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="image-studio-how" id="jgil-how">
-      <div class="container">
-        <header class="section-header">
-          <h2>How J GIL Image Studio Works</h2>
-          <p>
-            Right now, this is a visual sandbox — a deterministic placeholder renderer that lets you feel the
-            flow of a real image model without any external compute.
-          </p>
-        </header>
-        <div class="info-grid">
-          <article class="info-card">
-            <h3>Runs in Your Browser</h3>
-            <p>
-              All processing happens client-side. We use the HTML canvas to generate visuals based on your prompt,
-              mode, presets, and size. No server calls, no hidden uploads.
-            </p>
-          </article>
-          <article class="info-card">
-            <h3>Two Modes, Many Looks</h3>
-            <p>
-              <strong>Artwork Mode</strong> favors posters, scenes, and expressive layouts.
-              <strong>Brand Mode</strong> leans toward simple, logo-like compositions with strong focal points.
-            </p>
-          </article>
-          <article class="info-card">
-            <h3>Creator-First Defaults</h3>
-            <p>
-              No ads, no external logos, no “powered by” clutter.
-              Just a clean playground where you can try ideas and build your own visual language.
-            </p>
-          </article>
-        </div>
-        <p class="section-footnote">
-          Footnote: a real diffusion / generative model will plug into this exact interface in a later version.
-          The whole goal of v1 is to lock in the UX before we switch on heavy compute.
+    <!-- OVERVIEW -->
+    <section class="section">
+      <div class="section-inner">
+        <h2>What we’re building</h2>
+        <p class="section-lede">
+          The goal is simple: give everyday creators access to image design tools that run right in the browser —
+          no logins, no credits, no complicated dashboards.
         </p>
-      </div>
-    </section>
-
-    <!-- Prompt Cheatsheet -->
-    <section class="image-studio-prompts">
-      <div class="container">
-        <header class="section-header">
-          <h2>Prompt Cheatsheet</h2>
-          <p>
-            Use these as jump-off points. Swap the nouns, keep the structure. The more specific you are about
-            layout, mood, and style, the better your results will feel.
-          </p>
-        </header>
-        <div class="prompt-grid">
-          <div class="prompt-column">
-            <h3>Brand Mode (Minimalist)</h3>
-            <ul class="prompt-list">
-              <li>
-                <code>
-                  minimal wordmark for “Night Shift Studio”, lowercase, tight kerning, high contrast monochrome, subtle glow
-                </code>
-              </li>
-              <li>
-                <code>
-                  bold icon-only logo of a rocket + lightbulb hybrid, flat vector, thick lines, centered on deep navy background
-                </code>
-              </li>
-              <li>
-                <code>
-                  ultra-clean logo lockup: “Creator Grid” stacked, thin sans serif, pastel gradient background, lots of negative space
-                </code>
-              </li>
-            </ul>
-          </div>
-          <div class="prompt-column">
-            <h3>Artwork Mode (Scenes &amp; Posters)</h3>
-            <ul class="prompt-list">
-              <li>
-                <code>
-                  cinematic poster of a lone creator at a desk, screens glowing, city at night outside, neon blue and orange color palette
-                </code>
-              </li>
-              <li>
-                <code>
-                  abstract geometric poster inspired by metro maps, thick lines, circles, primary colors on off-white background
-                </code>
-              </li>
-              <li>
-                <code>
-                  moody vaporwave alleyway scene, pink and teal lights, distant figure walking, grainy texture, bold title at the bottom
-                </code>
-              </li>
-            </ul>
-          </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Free AI Image Tools</h3>
+            <p>Start with J GIL Image Studio, a browser-native playground for thumbnails, cover graphics, and brand-style mockups.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Automation Experiments</h3>
+            <p>Behind the scenes we’re testing diffusion models, Make.com workflows, and custom agents so the tools get smarter over time.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Family &amp; Legacy Focused</h3>
+            <p>Everything we ship is built around real life — kids, work shifts, side hustles — not some fantasy startup budget.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Roadmap / Coming Soon -->
-    <section class="image-studio-roadmap">
-      <div class="container">
-        <header class="section-header">
-          <h2>More AI Tools Are Coming</h2>
-          <p>
-            J GIL Image Studio is the first brick. The vision is a full stack of creator tools that live right on this site.
-          </p>
-        </header>
-        <div class="roadmap-grid">
-          <article class="roadmap-card">
-            <h3>Auto-Blog Studio</h3>
-            <p>
-              Draft, structure, and polish long-form posts in minutes. Opinionated templates built for founders and creators,
-              not generic SEO sludge.
-            </p>
-          </article>
-          <article class="roadmap-card">
-            <h3>Photo Editor Dock</h3>
-            <p>
-              A lightweight editing layer that pairs with tools like Photopea. Quick crops, overlays, and brand-consistent treatments.
-            </p>
-          </article>
-          <article class="roadmap-card">
-            <h3>Brand Kit Builder</h3>
-            <p>
-              Generate a simple kit around your project: colors, logo variations, type suggestions, and repeatable layouts.
-            </p>
-          </article>
-        </div>
-        <p class="section-footnote">
-          New tools will show up on this page the moment they’re ready. Bookmark it if you want to catch the experiments early.
+    <!-- SUPPORT -->
+    <section id="support" class="section section-alt">
+      <div class="section-inner">
+        <h2>Support the Vision</h2>
+        <p class="section-lede">
+          If you want to see more free tools, better automations, and a real community around this, you can help keep the lights on.
         </p>
+        <ul class="support-list">
+          <li><strong>Share the site</strong> with another creator or parent who needs better tools.</li>
+          <li><strong>Use the Image Studio</strong> and send feedback on what actually helps you.</li>
+          <li><strong>Donate when you can</strong> once the Support page is live.</li>
+        </ul>
+        <p class="support-note">Support page and tiers are coming soon — for now, using the tools and sending feedback is already a big help.</p>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="section-inner">
+        <h2>About J GIL Brothers</h2>
+        <p class="section-lede">
+          J GIL Brothers is a lean, experiment-first studio built around family, faith, and long-term legacy.
+        </p>
+        <div class="two-column">
+          <div>
+            <p>
+              The goal isn’t to “look like a big tech company.” The goal is to build useful tools and stories that help real people
+              move their ideas forward — starting with one small site, one tool, and one community at a time.
+            </p>
+          </div>
+          <div>
+            <p>
+              This project is being built in public: you’re seeing the early versions, the imperfect drafts, and the tools
+              before they’re polished. That’s by design.
+            </p>
+            <p>
+              If you ever need to reach out, the contact form will live here. For now, keep an eye on the tools page as things evolve.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="logo-mark">J</span>
-        <span class="footer-text">J GIL Brothers – Building bold tools for builders.</span>
-      </div>
-      <div class="footer-links">
-        <a href="/tools.html" class="footer-link">AI Tools</a>
-        <a href="/donate.html" class="footer-link">Support the Vision</a>
-        <a href="/about.html" class="footer-link">About &amp; Contact</a>
-      </div>
+    <div class="site-footer-inner">
+      <p>&copy; <span id="year"></span> J GIL Brothers. Built with audacity, family, and a lot of late nights.</p>
     </div>
   </footer>
 
-  <script src="/js/image-studio.js"></script>
+  <script>
+    // Simple year updater for the footer
+    (function () {
+      var el = document.getElementById('year');
+      if (el) {
+        el.textContent = new Date().getFullYear();
+      }
+    })();
+  </script>
 </body>
 </html>

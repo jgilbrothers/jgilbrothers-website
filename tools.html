@@ -1,337 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Tools | J GIL Brothers</title>
-  <meta
-    name="description"
-    content="Free in-browser AI tools from J GIL Brothers, including J GIL Image Studio — a local, no-login placeholder image generator."
-  />
-  <link rel="stylesheet" href="/styles/styles.css" />
+  <meta charset="UTF-8">
+  <title>Free AI Tools | J GIL Brothers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free AI tools from J GIL Brothers. Start with the J GIL Image Studio to experiment with image ideas in your browser.">
+  <link rel="stylesheet" href="/styles.css">
+
+  <!-- Page-specific styling for the Image Studio -->
+  <style>
+    .page-wrapper {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .page-intro {
+      margin-bottom: 2rem;
+    }
+
+    .page-kicker {
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      font-size: 0.98rem;
+      max-width: 640px;
+      opacity: 0.85;
+    }
+
+    .image-studio {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 1.75rem;
+      margin-top: 2rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 880px) {
+      .image-studio {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .studio-card {
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    }
+
+    .studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+    }
+
+    .studio-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .studio-tag {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+    }
+
+    .studio-label {
+      display: block;
+      font-size: 0.8rem;
+      margin-bottom: 0.25rem;
+      opacity: 0.8;
+    }
+
+    .studio-textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      padding: 0.8rem 0.9rem;
+      border-radius: 0.65rem;
+      border: 1px solid rgba(0,0,0,0.12);
+      font: inherit;
+      line-height: 1.4;
+      box-sizing: border-box;
+    }
+
+    .studio-textarea:focus {
+      outline: none;
+      border-color: rgba(0,0,0,0.35);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+    }
+
+    .studio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.1rem;
+      align-items: center;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 0.15rem;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(245,245,245,0.9);
+    }
+
+    .mode-pill {
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.8rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    .mode-pill.is-active {
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      opacity: 1;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    .style-chip {
+      font-size: 0.78rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #ffffff;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    .style-chip.is-selected {
+      border-color: rgba(0,0,0,0.7);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      opacity: 1;
+    }
+
+    .select-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.4rem;
+    }
+
+    .studio-select {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.16);
+      background: #ffffff;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.3rem;
+      align-items: center;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 0.55rem 1.3rem;
+      font-size: 0.86rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    .btn-primary[disabled] {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .btn-ghost {
+      background: #ffffff;
+      color: inherit;
+      border-color: rgba(0,0,0,0.15);
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .studio-preview-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 1rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: radial-gradient(circle at top left, #f7f7f7, #e5e5e5);
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    canvas#previewCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .preview-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      pointer-events: none;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .preview-placeholder h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .preview-placeholder p {
+      font-size: 0.8rem;
+      max-width: 260px;
+      opacity: 0.8;
+    }
+
+    .preview-badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+      margin-bottom: 0.3rem;
+    }
+
+    .preview-overlay-generating {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.9), rgba(0,0,0,0.08));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 2;
+    }
+
+    .preview-overlay-generating.is-visible {
+      display: flex;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.18);
+      border-top-color: rgba(0,0,0,0.8);
+      animation: spin 0.85s linear infinite;
+    }
+
+    .preview-overlay-generating p {
+      font-size: 0.82rem;
+      opacity: 0.85;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .preview-meta {
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      opacity: 0.8;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .gallery-section {
+      margin-top: 2.5rem;
+    }
+
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .gallery-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .gallery-hint {
+      font-size: 0.8rem;
+      opacity: 0.75;
+    }
+
+    .session-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .gallery-item {
+      border-radius: 0.8rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-meta {
+      padding: 0.4rem 0.55rem 0.5rem;
+    }
+
+    .gallery-meta-main {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .gallery-meta-sub {
+      font-size: 0.7rem;
+      opacity: 0.75;
+    }
+
+    .coming-soon-note {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed rgba(0,0,0,0.12);
+      font-size: 0.88rem;
+      opacity: 0.85;
+    }
+
+    .coming-soon-note strong {
+      font-weight: 600;
+    }
+  </style>
+
+  <script src="/js/image-studio.js" defer></script>
 </head>
 <body>
-  <!-- Header / Global Navigation -->
+  <!-- If your real site header is different, you can replace this header with the one from index.html later -->
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="/index.html" class="brand-mark">
-        <span class="brand-word">J GIL Brothers</span>
-      </a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="/index.html" class="nav-link">Home</a>
-        <a href="/tools.html" class="nav-link nav-link-active">AI Tools</a>
-        <a href="/studio.html" class="nav-link">Studio</a>
-        <a href="/about.html" class="nav-link">About</a>
-        <a href="/contact.html" class="nav-link">Contact</a>
-      </nav>
+    <div class="page-wrapper">
+      <div class="header-inner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
+        <a href="/" class="site-logo" style="font-weight:700;font-size:1.1rem;text-decoration:none;">J GIL Brothers</a>
+        <nav class="site-nav" style="display:flex;gap:1rem;font-size:0.9rem;">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/tools.html" class="nav-link" style="font-weight:600;">Free AI Tools</a>
+        </nav>
+      </div>
     </div>
   </header>
 
-  <main class="page page-tools">
-    <!-- Hero: AI Tools Overview -->
-    <section class="hero hero-tools">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <h1 class="hero-title">J GIL AI Tools</h1>
-          <p class="hero-subtitle">
-            Free, no-login tools that run in your browser. This first release ships
-            <strong>J GIL Image Studio</strong> — a fast, deterministic placeholder renderer
-            while we prep the full diffusion backend.
-          </p>
-          <ul class="hero-highlights">
-            <li>Runs locally — no uploads, no servers.</li>
-            <li>No accounts, no credits, no sign-in wall.</li>
-            <li>Designed for artwork concepts and brand-style mockups.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Image Studio -->
-    <section class="section image-studio-section" id="image-studio">
-      <div class="container image-studio-layout">
-        <!-- Controls column -->
-        <div class="image-studio-controls">
-          <header class="section-header">
-            <h2 class="section-title">J GIL Image Studio (v1)</h2>
-            <p class="section-lead">
-              A structured playground for cover art, thumbnails, and logo-style layouts.
-              This v1 uses a <strong>pure HTML canvas placeholder engine</strong>, all in your browser.
-            </p>
-          </header>
-
-          <form id="imageStudioForm" class="image-studio-form" novalidate>
-            <!-- Prompt -->
-            <div class="field-group">
-              <label for="prompt" class="field-label">Prompt</label>
-              <textarea
-                id="prompt"
-                name="prompt"
-                class="field-input field-textarea"
-                rows="4"
-                placeholder="Example: Bold cover art for the J GIL Brothers launch episode — deep blue background, bright orange accent, clean title text."
-              ></textarea>
-              <p class="field-help">
-                Describe the vibe, subject, and energy. The renderer uses your text
-                to drive layout, color, and composition.
-              </p>
-            </div>
-
-            <!-- Mode toggle -->
-            <div class="field-group">
-              <span class="field-label">Mode</span>
-              <div
-                class="toggle-row"
-                role="radiogroup"
-                aria-label="Image Studio mode"
-              >
-                <label class="chip chip-toggle">
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="artwork"
-                    checked
-                  />
-                  <span>Artwork</span>
-                </label>
-                <label class="chip chip-toggle">
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="brand"
-                  />
-                  <span>Brand</span>
-                </label>
-              </div>
-              <p class="field-help small-note">
-                <strong>Artwork</strong> = poster, cover, or thumbnail layouts.
-                <strong>Brand</strong> = logo-style, tighter geometry and more negative space.
-              </p>
-            </div>
-
-            <!-- Style chips -->
-            <div class="field-group">
-              <span class="field-label">Style preset</span>
-              <div
-                class="chip-row"
-                id="styleChips"
-                role="listbox"
-                aria-label="Style preset"
-              >
-                <button
-                  type="button"
-                  class="chip chip-style is-selected"
-                  data-style="boldPoster"
-                  aria-pressed="true"
-                >
-                  Bold Poster
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="cleanWordmark"
-                  aria-pressed="false"
-                >
-                  Clean Wordmark
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="iconOnly"
-                  aria-pressed="false"
-                >
-                  Icon Only
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="softGradient"
-                  aria-pressed="false"
-                >
-                  Soft Gradient
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="monochrome"
-                  aria-pressed="false"
-                >
-                  Monochrome
-                </button>
-              </div>
-            </div>
-
-            <!-- Size + Detail -->
-            <div class="field-row field-row-split">
-              <div class="field-group">
-                <span class="field-label">Canvas size</span>
-                <div class="radio-column">
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="square"
-                      checked
-                    />
-                    <span>Square • 1024 × 1024</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="portrait"
-                    />
-                    <span>Portrait • 768 × 1024</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="landscape"
-                    />
-                    <span>Landscape • 1024 × 768</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <span class="field-label">Detail level</span>
-                <div class="radio-column">
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="fast"
-                    />
-                    <span>Fast</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="balanced"
-                      checked
-                    />
-                    <span>Balanced</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="highDetail"
-                    />
-                    <span>High Detail</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="actions-row">
-              <button
-                type="button"
-                id="generateBtn"
-                class="btn btn-primary"
-                disabled
-              >
-                Generate Image
-              </button>
-              <button
-                type="button"
-                id="downloadBtn"
-                class="btn btn-secondary"
-                disabled
-              >
-                Download PNG
-              </button>
-              <button
-                type="button"
-                id="saveBtn"
-                class="btn"
-                disabled
-              >
-                Save to Gallery
-              </button>
-              <button
-                type="button"
-                id="clearBtn"
-                class="btn btn-text"
-              >
-                Clear &amp; Try Again
-              </button>
-            </div>
-
-            <p class="small-note">
-              All rendering happens locally in your browser using the HTML canvas.
-              This v1 is a deterministic placeholder renderer — a visual sketchpad
-              while we wire up the full diffusion backend.
-            </p>
-          </form>
-        </div>
-
-        <!-- Preview column -->
-        <div class="image-studio-preview">
-          <div class="canvas-frame">
-            <canvas
-              id="imageCanvas"
-              width="1024"
-              height="1024"
-              aria-label="Generated image preview"
-            ></canvas>
-          </div>
-          <p class="small-note">
-            Tip: Start with a strong noun phrase like
-            <em>“loud launch card for the J GIL Brothers community”</em>, then flip between
-            Artwork vs Brand and different style presets.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Session Gallery -->
-    <section class="section image-studio-gallery-section">
-      <div class="container">
-        <header class="section-header">
-          <h2 class="section-title">Session Gallery</h2>
-          <p class="section-lead">
-            Saved images from this browser session only. Refreshing the page clears them.
-          </p>
-        </header>
-
-        <p id="galleryEmpty" class="gallery-empty">
-          No saved images yet. Generate something you like and hit
-          <strong>“Save to Gallery”.</strong>
+  <main>
+    <div class="page-wrapper">
+      <section class="page-intro">
+        <div class="page-kicker">Free AI tools</div>
+        <h1 class="page-title">J GIL Image Studio</h1>
+        <p class="page-subtitle">
+          This is a browser-only sandbox. Type a prompt, pick a vibe, and the Image Studio will generate a visual mockup on the canvas. No accounts, no backend, just a safe place to experiment.
         </p>
+      </section>
 
-        <div
-          id="galleryGrid"
-          class="gallery-grid"
-          aria-live="polite"
-        ></div>
-      </div>
-    </section>
-  </main>
+      <section class="image-studio" aria-label="J GIL Image Studio">
+        <!-- Left: controls -->
+        <div class="studio-card">
+          <div class="studio-header">
+            <h2 class="studio-title">Prompt &amp; settings</h2>
+            <span class="studio-tag">Front-end only</span>
+          </div>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p class="footer-copy">
-        © <span id="footerYear"></span> J GIL Brothers. All rights reserved.
-      </p>
+          <label for="promptInput" class="studio-label">Describe what you want to see</label>
+          <textarea id="promptInput" class="studio-textarea" placeholder="Example: bold logo for a streetwear brand with neon accents and a simple crown icon."></textarea>
+
+          <div class="studio-row">
+            <div>
+              <span class="studio-label">Mode</span>
+              <div class="mode-toggle" id="modeToggle">
+                <button type="button" class="mode-pill is-active" data-mode="brand">Brand</button>
+                <button type="button" class="mode-pill" data-mode="artwork">Artwork</button>
+              </div>
+            </div>
+
+            <div>
+              <span class="studio-label">Style</span>
+              <div class="chip-row" id="styleChips">
+                <button type="button" class="style-chip is-selected" data-style="minimal">Minimal</button>
+                <button type="button" class="style-chip" data-style="bold">Bold</button>
+                <button type="button" class="style-chip" data-style="retro">Retro</button>
+                <button type="button" class="style-chip" data-style="neon">Neon</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="studio-row">
+            <div>
+              <span class="studio-label">Canvas size</span>
+              <div class="select-row">
+                <select id="sizeSelect" class="studio-select">
+                  <option value="square">Square (1:1)</option>
+                  <option value="landscape">Landscape (16:9)</option>
+                  <option value="portrait">Portrait (3:4)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <span class="studio-label">Detail level</span>
+              <div class="select-row">
+                <select id="detailSelect" class="studio-select">
+                  <option value="fast">Fast mockup</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="detailed">Extra detailed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button id="generateBtn" class="btn-primary">
+              <span class="btn-icon">⚡</span>
+              <span>Generate mockup</span>
+            </button>
+            <button id="saveToGalleryBtn" class="btn-ghost" disabled>
+              <span class="btn-icon">★</span>
+              <span>Save to session gallery</span>
+            </button>
+            <button id="downloadBtn" class="btn-ghost" disabled>
+              <span class="btn-icon">⬇</span>
+              <span>Download PNG</span>
+            </button>
+          </div>
+
+          <div class="status-text" id="statusText">
+            Ready. This is a placeholder tool – no images are sent to any server.
+          </div>
+        </div>
+
+        <!-- Right: preview -->
+        <div class="studio-card">
+          <div class="studio-header">
+            <h2 class="studio-title">Preview canvas</h2>
+            <span class="studio-tag" id="previewModeTag">Brand · Minimal</span>
+          </div>
+
+          <div class="studio-preview-wrapper">
+            <canvas id="previewCanvas"></canvas>
+
+            <div class="preview-placeholder" id="previewPlaceholder">
+              <div class="preview-badge">No image yet</div>
+              <h3>Describe something and hit generate</h3>
+              <p>The canvas will update with a stylized mockup based on your prompt, mode, and style.</p>
+            </div>
+
+            <div class="preview-overlay-generating" id="previewGenerating">
+              <div class="spinner"></div>
+              <p>Generating a mockup preview…</p>
+            </div>
+          </div>
+
+          <div class="preview-meta">
+            <span id="previewMetaText">Waiting for first generation.</span>
+            <span id="previewTimestamp"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery-section" aria-label="Session gallery">
+        <div class="gallery-header">
+          <h2 class="gallery-title">Session gallery</h2>
+          <p class="gallery-hint">Saved previews live here until you refresh the page. Great for comparing ideas quickly.</p>
+        </div>
+        <div id="sessionGallery" class="session-gallery"></div>
+      </section>
+
+      <section class="coming-soon-note">
+        <p>
+          <strong>More free tools coming soon:</strong> once this Image Studio is dialed in, this page will expand into a full suite of creator tools – blog helpers, caption generators, and more. For now, this sandbox is the first building block.
+        </p>
+      </section>
     </div>
-  </footer>
-
-  <!-- Small helper for footer year; no dependency on main JS -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var yearEl = document.getElementById('footerYear');
-      if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
-      }
-    });
-  </script>
-
-  <!-- Image Studio logic -->
-  <script src="/js/image-studio.js" defer></script>
+  </main>
 </body>
 </html>

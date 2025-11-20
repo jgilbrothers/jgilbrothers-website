@@ -1,555 +1,386 @@
-// J GIL Image Studio v1
-// Pure front-end placeholder renderer: deterministic canvas art, no servers.
+// js/image-studio.js
+// Pure front-end placeholder logic for J GIL Image Studio
+// No external API calls, no network requests.
 
 (function () {
-  // ---------------------------------------------------------------------------
-  // Utilities
-  // ---------------------------------------------------------------------------
+  const promptInput = document.getElementById('promptInput');
+  const modeToggle = document.getElementById('modeToggle');
+  const styleChips = document.getElementById('styleChips');
+  const sizeSelect = document.getElementById('sizeSelect');
+  const detailSelect = document.getElementById('detailSelect');
+  const generateBtn = document.getElementById('generateBtn');
+  const saveToGalleryBtn = document.getElementById('saveToGalleryBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const statusText = document.getElementById('statusText');
+  const previewModeTag = document.getElementById('previewModeTag');
+  const previewCanvas = document.getElementById('previewCanvas');
+  const previewPlaceholder = document.getElementById('previewPlaceholder');
+  const previewGenerating = document.getElementById('previewGenerating');
+  const previewMetaText = document.getElementById('previewMetaText');
+  const previewTimestamp = document.getElementById('previewTimestamp');
+  const sessionGallery = document.getElementById('sessionGallery');
 
-  function hashString(input) {
-    var str = String(input || "");
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-    }
-    if (!hash) hash = 1;
-    return hash;
+  if (!previewCanvas) {
+    // Page not loaded or markup missing; fail silently.
+    return;
   }
 
-  function createRng(seedInput) {
-    var seed = hashString(seedInput);
-    return function nextRandom() {
-      seed = (seed * 1664525 + 1013904223) >>> 0;
-      return seed / 4294967296;
-    };
+  const ctx = previewCanvas.getContext('2d');
+  let lastImageDataUrl = null;
+  let isGenerating = false;
+
+  function getActiveMode() {
+    const active = modeToggle.querySelector('.mode-pill.is-active');
+    return active ? active.dataset.mode : 'brand';
   }
 
-  function getSelectedRadioValue(name, fallback) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
-    return el ? el.value : fallback;
+  function getActiveStyle() {
+    const selected = styleChips.querySelector('.style-chip.is-selected');
+    return selected ? selected.dataset.style : 'minimal';
   }
 
-  function getCanvasSize(sizeValue) {
-    if (sizeValue === "portrait") {
-      return { width: 768, height: 1024, label: "Portrait 768×1024" };
-    }
-    if (sizeValue === "landscape") {
-      return { width: 1024, height: 768, label: "Landscape 1024×768" };
-    }
-    return { width: 1024, height: 1024, label: "Square 1024×1024" };
+  function updateModeTag() {
+    const mode = getActiveMode();
+    const style = getActiveStyle();
+
+    const modeLabel = mode === 'brand' ? 'Brand' : 'Artwork';
+    const styleLabel = {
+      minimal: 'Minimal',
+      bold: 'Bold',
+      retro: 'Retro',
+      neon: 'Neon'
+    }[style] || 'Custom';
+
+    previewModeTag.textContent = modeLabel + ' · ' + styleLabel;
   }
 
-  // ---------------------------------------------------------------------------
-  // Palette + Drawing
-  // ---------------------------------------------------------------------------
+  function setCanvasSizeFromSelection() {
+    const size = sizeSelect.value;
 
-  function choosePalette(rng, mode, style) {
-    var sets = [
-      { bg: "#020617", accent: "#38bdf8", accent2: "#f97316", text: "#e5e7eb" },
-      { bg: "#020617", accent: "#6366f1", accent2: "#22c55e", text: "#f9fafb" },
-      { bg: "#020617", accent: "#fb7185", accent2: "#38bdf8", text: "#f3f4f6" },
-      { bg: "#020617", accent: "#a855f7", accent2: "#ecfeff", text: "#e5e7eb" },
-      { bg: "#020617", accent: "#22c55e", accent2: "#a5b4fc", text: "#e5e7eb" }
-    ];
-    var base = sets[Math.floor(rng() * sets.length)];
-    var palette = {
-      bg: base.bg,
-      accent: base.accent,
-      accent2: base.accent2,
-      text: base.text
-    };
+    // Default dimensions; canvas will scale with CSS
+    let width = 960;
+    let height = 720;
 
-    if (style === "monochrome") {
-      palette.accent2 = palette.accent;
-      palette.text = "#e5e7eb";
-    } else if (style === "softGradient") {
-      palette.bg = "#020617";
+    if (size === 'square') {
+      width = 800;
+      height = 800;
+    } else if (size === 'portrait') {
+      width = 720;
+      height = 960;
     }
 
-    if (mode === "brand") {
-      palette.accent2 = "#64748b";
-    }
-
-    return palette;
+    previewCanvas.width = width;
+    previewCanvas.height = height;
   }
 
-  function drawBackground(ctx, canvas, rng, palette, mode, style) {
-    var w = canvas.width;
-    var h = canvas.height;
+  function drawMockup() {
+    const prompt = (promptInput.value || '').trim();
+    const mode = getActiveMode();
+    const style = getActiveStyle();
+    const detail = detailSelect.value;
 
-    if (style === "softGradient") {
-      var grad = ctx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, palette.accent);
-      grad.addColorStop(0.5, palette.accent2);
-      grad.addColorStop(1, palette.bg);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-      return;
+    setCanvasSizeFromSelection();
+
+    const w = previewCanvas.width;
+    const h = previewCanvas.height;
+
+    // Base background color based on style
+    let baseColor1 = '#e5e5e5';
+    let baseColor2 = '#f8f8f8';
+    let accentColor = '#000000';
+
+    if (style === 'bold') {
+      baseColor1 = '#111111';
+      baseColor2 = '#3b3b3b';
+      accentColor = '#ffffff';
+    } else if (style === 'retro') {
+      baseColor1 = '#f4d9a6';
+      baseColor2 = '#f5b5a7';
+      accentColor = '#3b1d2a';
+    } else if (style === 'neon') {
+      baseColor1 = '#050814';
+      baseColor2 = '#181b3a';
+      accentColor = '#4ad6ff';
     }
 
-    if (style === "monochrome") {
-      ctx.fillStyle = palette.bg;
-      ctx.fillRect(0, 0, w, h);
-      return;
-    }
-
-    var split = 0.35 + rng() * 0.25;
-    if (mode === "brand") split = 0.3;
-    var vertical = rng() > 0.5;
-
-    ctx.fillStyle = palette.bg;
+    // Fill gradient background
+    const gradient = ctx.createLinearGradient(0, 0, w, h);
+    gradient.addColorStop(0, baseColor1);
+    gradient.addColorStop(1, baseColor2);
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, w, h);
 
-    ctx.fillStyle = palette.accent;
-    if (vertical) {
-      ctx.fillRect(0, 0, w * split, h);
+    // Add a subtle pattern based on detail level
+    const passes = detail === 'detailed' ? 120 : detail === 'balanced' ? 60 : 30;
+    ctx.save();
+    ctx.globalAlpha = style === 'bold' ? 0.18 : 0.12;
+
+    for (let i = 0; i < passes; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const radius = 8 + Math.random() * 32;
+
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = accentColor;
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    // Central badge / logo block
+    const blockWidth = w * 0.5;
+    const blockHeight = h * 0.25;
+    const blockX = (w - blockWidth) / 2;
+    const blockY = (h - blockHeight) / 2;
+
+    ctx.fillStyle = style === 'bold' ? '#ffffff' : 'rgba(255,255,255,0.92)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+    ctx.lineWidth = style === 'bold' ? 3 : 2;
+    ctx.beginPath();
+    ctx.roundRect(blockX, blockY, blockWidth, blockHeight, 24);
+    ctx.fill();
+    ctx.stroke();
+
+    // Crown-esque motif for "brand" mode
+    if (mode === 'brand') {
+      const crownWidth = blockWidth * 0.35;
+      const crownHeight = blockHeight * 0.24;
+      const cx = blockX + blockWidth / 2;
+      const cy = blockY + blockHeight * 0.34;
+
+      ctx.beginPath();
+      ctx.moveTo(cx - crownWidth / 2, cy + crownHeight / 2);
+      ctx.lineTo(cx - crownWidth / 4, cy - crownHeight / 2);
+      ctx.lineTo(cx, cy + crownHeight / 4);
+      ctx.lineTo(cx + crownWidth / 4, cy - crownHeight / 2);
+      ctx.lineTo(cx + crownWidth / 2, cy + crownHeight / 2);
+      ctx.closePath();
+      ctx.fillStyle = accentColor;
+      ctx.fill();
     } else {
-      ctx.fillRect(0, 0, w, h * split);
+      // Simple abstract glyph for artwork mode
+      ctx.save();
+      ctx.translate(blockX + blockWidth / 2, blockY + blockHeight * 0.35);
+      ctx.rotate(-0.2);
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(-blockWidth * 0.18, -blockHeight * 0.12, blockWidth * 0.36, blockHeight * 0.24);
+      ctx.restore();
     }
 
-    ctx.globalAlpha = 0.16;
-    ctx.fillStyle = palette.accent2;
-    ctx.fillRect(w * 0.1, h * 0.2, w * 0.8, h * 0.6);
-    ctx.globalAlpha = 1;
-  }
+    // Text inside the block
+    ctx.fillStyle = style === 'bold' ? '#111111' : '#111111';
+    ctx.textAlign = 'center';
 
-  function drawShapes(ctx, canvas, rng, palette, mode, detail) {
-    var w = canvas.width;
-    var h = canvas.height;
-    var base = mode === "brand" ? 3 : 5;
-    var extra = detail === "highDetail" ? 4 : detail === "balanced" ? 2 : 0;
-    var n = base + extra;
+    const mainLabel = prompt || 'Your concept here';
+    const secondaryLabel = mode === 'brand' ? 'Brand mockup' : 'Artwork mockup';
 
-    for (var i = 0; i < n; i++) {
-      var t = rng();
-      var x = w * (0.15 + rng() * 0.7);
-      var y = h * (0.15 + rng() * 0.7);
+    const maxMainWidth = blockWidth * 0.8;
+    const words = mainLabel.split(/\s+/);
+    let line = '';
+    const lines = [];
+    const mainFontSize = Math.min(28, Math.max(16, w * 0.028));
+    ctx.font = '600 ' + mainFontSize + 'px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
 
-      if (mode === "brand") {
-        x = w * (0.35 + rng() * 0.3);
-        y = h * (0.3 + rng() * 0.25);
-      }
-
-      var primary = i % 2 === 0;
-      ctx.globalAlpha = primary ? 0.9 : 0.55;
-      ctx.fillStyle = primary ? palette.accent : palette.accent2;
-
-      if (t < 0.35) {
-        // Circle
-        var r = (Math.min(w, h) *
-          (mode === "brand" ? 0.09 : 0.13) *
-          (0.7 + rng() * 0.6));
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (t < 0.7) {
-        // Bar
-        var bw = w * (mode === "brand" ? 0.22 : 0.32) * (0.8 + rng() * 0.6);
-        var bh = h * 0.04 * (0.7 + rng() * 0.9);
-        var angle = (rng() - 0.5) * (mode === "brand" ? 0.3 : 0.7);
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
-        ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
-        ctx.restore();
-      } else {
-        // Rect
-        var rw = w * 0.18 * (0.7 + rng() * 0.9);
-        var rh = h * 0.12 * (0.7 + rng() * 0.9);
-        ctx.fillRect(x - rw / 2, y - rh / 2, rw, rh);
-      }
-    }
-
-    ctx.globalAlpha = 1;
-  }
-
-  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-    var words = text.split(/\s+/);
-    var line = "";
-    for (var i = 0; i < words.length; i++) {
-      var test = line ? line + " " + words[i] : words[i];
-      var width = ctx.measureText(test).width;
-      if (width > maxWidth && i > 0) {
-        ctx.fillText(line, x, y);
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line ? line + ' ' + words[i] : words[i];
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxMainWidth && line) {
+        lines.push(line);
         line = words[i];
-        y += lineHeight;
       } else {
-        line = test;
+        line = testLine;
       }
     }
-    if (line) ctx.fillText(line, x, y);
-  }
-
-  function drawTitle(ctx, canvas, palette, mode, detail, prompt) {
-    var w = canvas.width;
-    var h = canvas.height;
-    var text = (prompt || "").trim();
-    var maxChars = detail === "highDetail" ? 90 : 70;
-
-    if (!text) {
-      text = "J GIL Image Studio";
-    } else if (text.length > maxChars) {
-      text = text.slice(0, maxChars - 1) + "…";
+    if (line) lines.push(line);
+    if (lines.length > 3) {
+      lines.length = 3;
+      lines[2] = lines[2] + '…';
     }
 
-    var baseSize = mode === "brand" ? 0.055 : 0.065;
-    var fontSize = Math.round(h * baseSize);
-    if (detail === "highDetail") fontSize = Math.round(fontSize * 0.95);
+    let textY = blockY + blockHeight * 0.55;
+    const lineHeight = mainFontSize * 1.15;
 
-    ctx.fillStyle = palette.text;
-    ctx.font =
-      "600 " +
-      fontSize +
-      "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
-    ctx.textAlign = mode === "brand" ? "center" : "left";
-
-    var lineHeight = fontSize * 1.25;
-    var marginX = mode === "brand" ? w * 0.12 : w * 0.1;
-    var maxWidth = mode === "brand" ? w - marginX * 2 : w * 0.6;
-    var startX = mode === "brand" ? w / 2 : marginX;
-    var startY = mode === "brand" ? h * 0.56 : h * 0.74;
-
-    wrapText(ctx, text, startX, startY, maxWidth, lineHeight);
-
-    if (mode === "brand") {
-      ctx.font =
-        "500 " +
-        Math.round(fontSize * 0.45) +
-        "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
-      ctx.fillStyle = "rgba(226, 232, 240, 0.86)";
-      ctx.textAlign = "center";
-      ctx.fillText("J GIL Brothers", w / 2, startY + lineHeight * 1.6);
-    }
-  }
-
-  function clearCanvasPlaceholder(ctx, canvas) {
-    var w = canvas.width;
-    var h = canvas.height;
-
-    ctx.clearRect(0, 0, w, h);
-
-    var grad = ctx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, "#020617");
-    grad.addColorStop(1, "#020617");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 8]);
-    var pad = Math.round(Math.min(w, h) * 0.08);
-    ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = "rgba(148, 163, 184, 0.9)";
-    var fontSize = Math.round(Math.min(w, h) * 0.045);
-    ctx.font =
-      "500 " +
-      fontSize +
-      "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Your image will appear here", w / 2, h / 2);
-  }
-
-  function loadImageIntoCanvas(canvas, ctx, src, callback) {
-    var img = new Image();
-    img.onload = function () {
-      var w = img.naturalWidth || img.width;
-      var h = img.naturalHeight || img.height;
-      if (!w || !h) {
-        if (callback) callback(false);
-        return;
-      }
-      canvas.width = w;
-      canvas.height = h;
-      ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(img, 0, 0, w, h);
-      if (callback) callback(true);
-    };
-    img.onerror = function () {
-      if (callback) callback(false);
-    };
-    img.src = src;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Main logic
-  // ---------------------------------------------------------------------------
-
-  document.addEventListener("DOMContentLoaded", function () {
-    var form = document.getElementById("imageStudioForm");
-    var promptInput = document.getElementById("prompt");
-    var styleButtons = Array.prototype.slice.call(
-      document.querySelectorAll(".chip-style")
-    );
-    var generateBtn = document.getElementById("generateBtn");
-    var downloadBtn = document.getElementById("downloadBtn");
-    var saveBtn = document.getElementById("saveBtn");
-    var clearBtn = document.getElementById("clearBtn");
-    var galleryGrid = document.getElementById("galleryGrid");
-    var galleryEmpty = document.getElementById("galleryEmpty");
-
-    var canvas = document.getElementById("imageCanvas");
-    if (!canvas || !canvas.getContext) return;
-    var ctx = canvas.getContext("2d");
-
-    var selectedStyle = "boldPoster";
-    var hasGeneratedImage = false;
-    var savedImages = [];
-
-    function updateGenerateState() {
-      var hasPrompt =
-        promptInput && promptInput.value && promptInput.value.trim().length > 0;
-      if (generateBtn) generateBtn.disabled = !hasPrompt;
-    }
-
-    function updateActionButtons() {
-      var disabled = !hasGeneratedImage;
-      if (downloadBtn) downloadBtn.disabled = disabled;
-      if (saveBtn) saveBtn.disabled = disabled;
-    }
-
-    function getSettings() {
-      var prompt = promptInput ? promptInput.value.trim() : "";
-      var mode = getSelectedRadioValue("mode", "artwork");
-      var style = selectedStyle || "boldPoster";
-      var sizeValue = getSelectedRadioValue("size", "square");
-      var detail = getSelectedRadioValue("detail", "balanced");
-      var size = getCanvasSize(sizeValue);
-
-      return {
-        prompt: prompt,
-        mode: mode,
-        style: style,
-        sizeValue: sizeValue,
-        size: size,
-        detail: detail
-      };
-    }
-
-    function render() {
-      var settings = getSettings();
-      if (!settings.prompt) return;
-
-      canvas.width = settings.size.width;
-      canvas.height = settings.size.height;
-
-      var seedKey =
-        settings.prompt.toLowerCase() +
-        "|" +
-        settings.mode +
-        "|" +
-        settings.style +
-        "|" +
-        settings.sizeValue +
-        "|" +
-        settings.detail;
-
-      var rng = createRng(seedKey);
-      var palette = choosePalette(rng, settings.mode, settings.style);
-
-      drawBackground(ctx, canvas, rng, palette, settings.mode, settings.style);
-      drawShapes(ctx, canvas, rng, palette, settings.mode, settings.detail);
-      drawTitle(
-        ctx,
-        canvas,
-        palette,
-        settings.mode,
-        settings.detail,
-        settings.prompt
-      );
-
-      hasGeneratedImage = true;
-      updateActionButtons();
-    }
-
-    function clearAll() {
-      if (promptInput) promptInput.value = "";
-      updateGenerateState();
-      hasGeneratedImage = false;
-      updateActionButtons();
-
-      canvas.width = 1024;
-      canvas.height = 1024;
-      clearCanvasPlaceholder(ctx, canvas);
-    }
-
-    function triggerDownload() {
-      if (!hasGeneratedImage) return;
-
-      if (canvas.toBlob) {
-        canvas.toBlob(
-          function (blob) {
-            if (!blob) return;
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = url;
-            var ts = new Date().toISOString().replace(/[:.]/g, "-");
-            a.download = "jgil-image-studio-" + ts + ".png";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          },
-          "image/png"
-        );
-      } else {
-        var data = canvas.toDataURL("image/png");
-        var link = document.createElement("a");
-        var ts2 = new Date().toISOString().replace(/[:.]/g, "-");
-        link.href = data;
-        link.download = "jgil-image-studio-" + ts2 + ".png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-
-    function addToGallery() {
-      if (!hasGeneratedImage || !galleryGrid) return;
-
-      var dataUrl = canvas.toDataURL("image/png");
-      var settings = getSettings();
-
-      savedImages.push({
-        url: dataUrl,
-        settings: settings,
-        createdAt: new Date()
-      });
-
-      var button = document.createElement("button");
-      button.type = "button";
-      button.className = "gallery-item";
-
-      var img = document.createElement("img");
-      img.src = dataUrl;
-      img.alt =
-        "Saved image: " +
-        (settings.prompt ? settings.prompt.slice(0, 60) : "generated image");
-
-      var label = document.createElement("span");
-      label.className = "gallery-label";
-
-      var modeLabel = settings.mode === "brand" ? "Brand" : "Artwork";
-      var styleLabel;
-      switch (settings.style) {
-        case "cleanWordmark":
-          styleLabel = "Clean Wordmark";
-          break;
-        case "iconOnly":
-          styleLabel = "Icon Only";
-          break;
-        case "softGradient":
-          styleLabel = "Soft Gradient";
-          break;
-        case "monochrome":
-          styleLabel = "Monochrome";
-          break;
-        default:
-          styleLabel = "Bold Poster";
-      }
-      label.textContent = modeLabel + " • " + styleLabel;
-
-      button.appendChild(img);
-      button.appendChild(label);
-
-      button.addEventListener("click", function () {
-        loadImageIntoCanvas(canvas, ctx, dataUrl, function (ok) {
-          if (ok) {
-            hasGeneratedImage = true;
-            updateActionButtons();
-          }
-        });
-      });
-
-      if (galleryGrid.firstChild) {
-        galleryGrid.insertBefore(button, galleryGrid.firstChild);
-      } else {
-        galleryGrid.appendChild(button);
-      }
-
-      if (galleryEmpty) {
-        galleryEmpty.hidden = galleryGrid.children.length > 0;
-      }
-    }
-
-    // -----------------------------------------------------------------------
-    // Events
-    // -----------------------------------------------------------------------
-
-    if (promptInput) {
-      promptInput.addEventListener("input", updateGenerateState);
-    }
-
-    styleButtons.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        styleButtons.forEach(function (b) {
-          b.classList.remove("is-selected");
-          b.setAttribute("aria-pressed", "false");
-        });
-        this.classList.add("is-selected");
-        this.setAttribute("aria-pressed", "true");
-        selectedStyle = this.getAttribute("data-style") || "boldPoster";
-      });
+    lines.forEach(function (l) {
+      ctx.fillText(l, blockX + blockWidth / 2, textY);
+      textY += lineHeight;
     });
 
-    if (generateBtn) {
-      generateBtn.addEventListener("click", function () {
-        var settings = getSettings();
-        if (!settings.prompt) return;
+    ctx.font = '400 ' + Math.max(12, mainFontSize * 0.6) + 'px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillText(secondaryLabel + ' · ' + style.charAt(0).toUpperCase() + style.slice(1), blockX + blockWidth / 2, blockY + blockHeight * 0.82);
+  }
 
-        try {
-          render();
-        } catch (err) {
-          canvas.width = 1024;
-          canvas.height = 1024;
-          clearCanvasPlaceholder(ctx, canvas);
-          ctx.save();
-          ctx.fillStyle = "rgba(239, 68, 68, 0.9)";
-          ctx.font =
-            "500 18px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            "Something glitched. Try generating again.",
-            canvas.width / 2,
-            canvas.height * 0.55
-          );
-          ctx.restore();
-          hasGeneratedImage = false;
-          updateActionButtons();
-        }
+  function startGenerating() {
+    if (isGenerating) return;
+
+    const prompt = (promptInput.value || '').trim();
+    if (!prompt) {
+      statusText.textContent = 'Type a quick description before generating.';
+      return;
+    }
+
+    isGenerating = true;
+    generateBtn.disabled = true;
+    saveToGalleryBtn.disabled = true;
+    downloadBtn.disabled = true;
+
+    previewPlaceholder.style.display = 'none';
+    previewGenerating.classList.add('is-visible');
+    statusText.textContent = 'Generating preview (in-browser)…';
+
+    const delay = detailSelect.value === 'detailed'
+      ? 1200
+      : detailSelect.value === 'balanced'
+        ? 800
+        : 400;
+
+    setTimeout(function () {
+      // Draw mockup
+      drawMockup();
+
+      // Mark generation finished
+      previewGenerating.classList.remove('is-visible');
+      generateBtn.disabled = false;
+      saveToGalleryBtn.disabled = false;
+      downloadBtn.disabled = false;
+      isGenerating = false;
+
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+      statusText.textContent = 'Preview updated.';
+      previewMetaText.textContent = 'Last generated from prompt.';
+      previewTimestamp.textContent = 'Generated at ' + timestamp;
+
+      // Cache the current PNG for download/gallery
+      lastImageDataUrl = previewCanvas.toDataURL('image/png');
+    }, delay);
+  }
+
+  function saveToGallery() {
+    if (!lastImageDataUrl) return;
+
+    const item = document.createElement('article');
+    item.className = 'gallery-item';
+
+    const img = document.createElement('img');
+    img.className = 'gallery-thumb';
+    img.src = lastImageDataUrl;
+    img.alt = 'Saved mockup preview';
+
+    const meta = document.createElement('div');
+    meta.className = 'gallery-meta';
+
+    const main = document.createElement('div');
+    main.className = 'gallery-meta-main';
+    main.textContent = (promptInput.value || 'Untitled idea').slice(0, 48);
+
+    const sub = document.createElement('div');
+    sub.className = 'gallery-meta-sub';
+
+    const mode = getActiveMode();
+    const style = getActiveStyle();
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+    const modeLabel = mode === 'brand' ? 'Brand' : 'Artwork';
+    sub.textContent = modeLabel + ' · ' + style + ' · ' + time;
+
+    meta.appendChild(main);
+    meta.appendChild(sub);
+
+    item.appendChild(img);
+    item.appendChild(meta);
+
+    // Prepend newest first
+    if (sessionGallery.firstChild) {
+      sessionGallery.insertBefore(item, sessionGallery.firstChild);
+    } else {
+      sessionGallery.appendChild(item);
+    }
+
+    statusText.textContent = 'Saved to this session gallery (resets on refresh).';
+  }
+
+  function downloadImage() {
+    if (!lastImageDataUrl) return;
+
+    const link = document.createElement('a');
+    link.href = lastImageDataUrl;
+    link.download = 'jgil-image-studio.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    statusText.textContent = 'PNG download started.';
+  }
+
+  function wireEvents() {
+    if (modeToggle) {
+      modeToggle.addEventListener('click', function (e) {
+        const btn = e.target.closest('.mode-pill');
+        if (!btn) return;
+        modeToggle.querySelectorAll('.mode-pill').forEach(function (b) {
+          b.classList.toggle('is-active', b === btn);
+        });
+        updateModeTag();
+      });
+    }
+
+    if (styleChips) {
+      styleChips.addEventListener('click', function (e) {
+        const chip = e.target.closest('.style-chip');
+        if (!chip) return;
+        styleChips.querySelectorAll('.style-chip').forEach(function (c) {
+          c.classList.toggle('is-selected', c === chip);
+        });
+        updateModeTag();
+      });
+    }
+
+    if (sizeSelect) {
+      sizeSelect.addEventListener('change', function () {
+        // Resize on next generation; here we just update the meta text.
+        previewMetaText.textContent = 'Size set to ' + sizeSelect.value + '. Generate again to update the canvas.';
+      });
+    }
+
+    if (detailSelect) {
+      detailSelect.addEventListener('change', function () {
+        previewMetaText.textContent = 'Detail set to ' + detailSelect.value + '. Generate again to apply.';
+      });
+    }
+
+    if (generateBtn) {
+      generateBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        startGenerating();
+      });
+    }
+
+    if (saveToGalleryBtn) {
+      saveToGalleryBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        saveToGallery();
       });
     }
 
     if (downloadBtn) {
-      downloadBtn.addEventListener("click", triggerDownload);
-    }
-
-    if (saveBtn) {
-      saveBtn.addEventListener("click", addToGallery);
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener("click", clearAll);
-    }
-
-    if (form) {
-      form.addEventListener("submit", function (e) {
+      downloadBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        downloadImage();
       });
     }
 
-    // -----------------------------------------------------------------------
-    // Initial state
-    // -----------------------------------------------------------------------
+    updateModeTag();
+    setCanvasSizeFromSelection();
+  }
 
-    canvas.width = 1024;
-    canvas.height = 1024;
-    clearCanvasPlaceholder(ctx, canvas);
-    updateGenerateState();
-    updateActionButtons();
-    if (galleryEmpty) {
-      galleryEmpty.hidden = false;
-    }
-  });
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireEvents);
+  } else {
+    wireEvents();
+  }
 })();

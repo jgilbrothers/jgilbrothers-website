@@ -5,6 +5,11 @@
   <title>Free AI Tools | J GIL Brothers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Free AI tools from J GIL Brothers. Start with the J GIL Image Studio to experiment with image ideas in your browser.">
+  <meta property="og:title" content="Free AI Tools | J GIL Brothers">
+  <meta property="og:description" content="Experiment with AI-powered branding ideas in the browser using the J GIL Image Studio and other creator tools from J GIL Brothers.">
+  <meta property="og:url" content="https://jgilbrothers.com/tools.html">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index,follow">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- Page-specific styling for the Image Studio -->
@@ -187,33 +192,11 @@
       align-items: center;
     }
 
-    .btn-primary,
-    .btn-ghost {
-      border-radius: 999px;
+    /* Use the global .button styles but size them for the studio */
+    .actions-row .button {
       padding: 0.55rem 1.3rem;
       font-size: 0.86rem;
-      border: 1px solid transparent;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: #000000;
-      color: #ffffff;
-    }
-
-    .btn-primary[disabled] {
-      opacity: 0.6;
-      cursor: default;
-    }
-
-    .btn-ghost {
-      background: #ffffff;
-      color: inherit;
-      border-color: rgba(0,0,0,0.15);
+      border-radius: 999px;
     }
 
     .btn-icon {
@@ -224,6 +207,7 @@
     .status-text {
       font-size: 0.8rem;
       opacity: 0.8;
+      margin-top: 0.25rem;
     }
 
     .studio-preview-wrapper {
@@ -394,14 +378,21 @@
   <script src="/js/image-studio.js" defer></script>
 </head>
 <body>
-  <!-- If your real site header is different, you can replace this header with the one from index.html later -->
+  <!-- Site Header (same as index.html, AI Tools active) -->
   <header class="site-header">
-    <div class="page-wrapper">
-      <div class="header-inner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
-        <a href="/" class="site-logo" style="font-weight:700;font-size:1.1rem;text-decoration:none;">J GIL Brothers</a>
-        <nav class="site-nav" style="display:flex;gap:1rem;font-size:0.9rem;">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="/" class="site-logo">
+          J GIL Brothers
+        </a>
+
+        <nav class="site-nav">
           <a href="/" class="nav-link">Home</a>
-          <a href="/tools.html" class="nav-link" style="font-weight:600;">Free AI Tools</a>
+          <a href="/about" class="nav-link">Our Vision (About Us)</a>
+          <a href="/tools.html" class="nav-link nav-link-active">AI Tools</a>
+          <a href="/creators-hub.html" class="nav-link">Creators Hub</a>
+          <a href="/logos-by-j-gil" class="nav-link">J GIL Studios</a>
+          <a href="/blog" class="nav-link">Blog</a>
         </nav>
       </div>
     </div>
@@ -473,15 +464,15 @@
           </div>
 
           <div class="actions-row">
-            <button id="generateBtn" class="btn-primary">
+            <button id="generateBtn" class="button primary">
               <span class="btn-icon">⚡</span>
               <span>Generate mockup</span>
             </button>
-            <button id="saveToGalleryBtn" class="btn-ghost" disabled>
+            <button id="saveToGalleryBtn" class="button secondary" disabled>
               <span class="btn-icon">★</span>
               <span>Save to session gallery</span>
             </button>
-            <button id="downloadBtn" class="btn-ghost" disabled>
+            <button id="downloadBtn" class="button secondary" disabled>
               <span class="btn-icon">⬇</span>
               <span>Download PNG</span>
             </button>
@@ -536,5 +527,65 @@
       </section>
     </div>
   </main>
+
+  <!-- Footer (same structure as index.html) -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-column">
+        <h3 class="footer-title">J GIL Brothers</h3>
+        <p class="footer-text">
+          Community-driven AI branding and content creation studio based in Durham, NC.
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-heading">Contact</h4>
+        <p class="footer-text">
+          Telephone: 917-994-4944<br>
+          Email us:
+          <a href="mailto:jgilbrothers@gmail.com">jgilbrothers@gmail.com</a><br>
+          Location: Durham NC 27707
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-heading">Connect</h4>
+        <ul class="footer-links">
+          <li><a href="https://www.instagram.com/jgilbrothers/" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/channel/UCrgX38Uu--Pq6vI2JnfHC0w" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://www.tiktok.com" target="_blank" rel="noopener">TikTok</a></li>
+          <li><a href="https://discord.com" target="_blank" rel="noopener">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-disclaimer">
+      <h4 class="footer-heading">Disclaimer</h4>
+      <p class="footer-text">
+        J GIL Brothers provides creative content and tools for educational and branding purposes.
+        All contributions made through this site — including any future paid memberships — are voluntary and generally non-refundable.
+        Membership revenue supports the growth and operations of the J GIL Brothers platform, including but not limited
+        to development, hosting, research and other expenses.
+      </p>
+      <p class="footer-text">
+        Where applicable, J GIL Brothers may utilize or integrate third-party platforms (such as DALL·E, Canva,
+        Stability AI, Photopea, etc.) to offer design or automation features. We do not own or control these
+        third-party tools, and we make no warranties regarding their availability, functionality, or results.
+        Use of these tools is subject to each platform’s own terms and conditions.
+      </p>
+      <p class="footer-text">
+        Unless otherwise specified, services offered are based on creative input, design execution, and branding
+        guidance — not direct tool access. Payments reflect labor, customization, and visual concept delivery.
+      </p>
+      <p class="footer-text">
+        J GIL Brothers is not liable for any outcomes resulting from user misuse, unmet expectations, technical
+        errors, or third-party limitations. Minor revisions may be offered at our sole discretion.
+      </p>
+      <p class="footer-meta">
+        © 2025 by J GIL Brothers. All rights reserved.
+      </p>
+    </div>
+  </footer>
 </body>
 </html>

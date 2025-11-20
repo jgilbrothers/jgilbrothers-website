@@ -1,337 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Tools | J GIL Brothers</title>
-  <meta
-    name="description"
-    content="Free in-browser AI tools from J GIL Brothers, including J GIL Image Studio — a local, no-login placeholder image generator."
-  />
-  <link rel="stylesheet" href="/styles/styles.css" />
+  <meta charset="UTF-8">
+  <title>J GIL Image Studio | Free In-Browser Image Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="J GIL Image Studio is a free, browser-native image playground for bold creators. No logins, no credits — just a prompt and a canvas.">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <script src="/js/image-studio.js" defer></script>
 </head>
 <body>
-  <!-- Header / Global Navigation -->
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="/index.html" class="brand-mark">
-        <span class="brand-word">J GIL Brothers</span>
+    <div class="site-header-inner">
+      <a href="/index.html" class="logo-link">
+        <span class="logo-text">J GIL Brothers</span>
       </a>
-      <nav class="site-nav" aria-label="Main navigation">
+      <nav class="site-nav">
         <a href="/index.html" class="nav-link">Home</a>
-        <a href="/tools.html" class="nav-link nav-link-active">AI Tools</a>
-        <a href="/studio.html" class="nav-link">Studio</a>
-        <a href="/about.html" class="nav-link">About</a>
-        <a href="/contact.html" class="nav-link">Contact</a>
+        <a href="/tools.html" class="nav-link nav-link-active">Free AI Tools</a>
+        <a href="/index.html#support" class="nav-link">Support the Vision</a>
+        <a href="/index.html#about" class="nav-link">About &amp; Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="page page-tools">
-    <!-- Hero: AI Tools Overview -->
-    <section class="hero hero-tools">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <h1 class="hero-title">J GIL AI Tools</h1>
-          <p class="hero-subtitle">
-            Free, no-login tools that run in your browser. This first release ships
-            <strong>J GIL Image Studio</strong> — a fast, deterministic placeholder renderer
-            while we prep the full diffusion backend.
-          </p>
-          <ul class="hero-highlights">
-            <li>Runs locally — no uploads, no servers.</li>
-            <li>No accounts, no credits, no sign-in wall.</li>
-            <li>Designed for artwork concepts and brand-style mockups.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Image Studio -->
-    <section class="section image-studio-section" id="image-studio">
-      <div class="container image-studio-layout">
-        <!-- Controls column -->
-        <div class="image-studio-controls">
-          <header class="section-header">
-            <h2 class="section-title">J GIL Image Studio (v1)</h2>
-            <p class="section-lead">
-              A structured playground for cover art, thumbnails, and logo-style layouts.
-              This v1 uses a <strong>pure HTML canvas placeholder engine</strong>, all in your browser.
-            </p>
-          </header>
-
-          <form id="imageStudioForm" class="image-studio-form" novalidate>
-            <!-- Prompt -->
-            <div class="field-group">
-              <label for="prompt" class="field-label">Prompt</label>
-              <textarea
-                id="prompt"
-                name="prompt"
-                class="field-input field-textarea"
-                rows="4"
-                placeholder="Example: Bold cover art for the J GIL Brothers launch episode — deep blue background, bright orange accent, clean title text."
-              ></textarea>
-              <p class="field-help">
-                Describe the vibe, subject, and energy. The renderer uses your text
-                to drive layout, color, and composition.
-              </p>
-            </div>
-
-            <!-- Mode toggle -->
-            <div class="field-group">
-              <span class="field-label">Mode</span>
-              <div
-                class="toggle-row"
-                role="radiogroup"
-                aria-label="Image Studio mode"
-              >
-                <label class="chip chip-toggle">
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="artwork"
-                    checked
-                  />
-                  <span>Artwork</span>
-                </label>
-                <label class="chip chip-toggle">
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="brand"
-                  />
-                  <span>Brand</span>
-                </label>
-              </div>
-              <p class="field-help small-note">
-                <strong>Artwork</strong> = poster, cover, or thumbnail layouts.
-                <strong>Brand</strong> = logo-style, tighter geometry and more negative space.
-              </p>
-            </div>
-
-            <!-- Style chips -->
-            <div class="field-group">
-              <span class="field-label">Style preset</span>
-              <div
-                class="chip-row"
-                id="styleChips"
-                role="listbox"
-                aria-label="Style preset"
-              >
-                <button
-                  type="button"
-                  class="chip chip-style is-selected"
-                  data-style="boldPoster"
-                  aria-pressed="true"
-                >
-                  Bold Poster
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="cleanWordmark"
-                  aria-pressed="false"
-                >
-                  Clean Wordmark
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="iconOnly"
-                  aria-pressed="false"
-                >
-                  Icon Only
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="softGradient"
-                  aria-pressed="false"
-                >
-                  Soft Gradient
-                </button>
-                <button
-                  type="button"
-                  class="chip chip-style"
-                  data-style="monochrome"
-                  aria-pressed="false"
-                >
-                  Monochrome
-                </button>
-              </div>
-            </div>
-
-            <!-- Size + Detail -->
-            <div class="field-row field-row-split">
-              <div class="field-group">
-                <span class="field-label">Canvas size</span>
-                <div class="radio-column">
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="square"
-                      checked
-                    />
-                    <span>Square • 1024 × 1024</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="portrait"
-                    />
-                    <span>Portrait • 768 × 1024</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="size"
-                      value="landscape"
-                    />
-                    <span>Landscape • 1024 × 768</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <span class="field-label">Detail level</span>
-                <div class="radio-column">
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="fast"
-                    />
-                    <span>Fast</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="balanced"
-                      checked
-                    />
-                    <span>Balanced</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="detail"
-                      value="highDetail"
-                    />
-                    <span>High Detail</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="actions-row">
-              <button
-                type="button"
-                id="generateBtn"
-                class="btn btn-primary"
-                disabled
-              >
-                Generate Image
-              </button>
-              <button
-                type="button"
-                id="downloadBtn"
-                class="btn btn-secondary"
-                disabled
-              >
-                Download PNG
-              </button>
-              <button
-                type="button"
-                id="saveBtn"
-                class="btn"
-                disabled
-              >
-                Save to Gallery
-              </button>
-              <button
-                type="button"
-                id="clearBtn"
-                class="btn btn-text"
-              >
-                Clear &amp; Try Again
-              </button>
-            </div>
-
-            <p class="small-note">
-              All rendering happens locally in your browser using the HTML canvas.
-              This v1 is a deterministic placeholder renderer — a visual sketchpad
-              while we wire up the full diffusion backend.
-            </p>
-          </form>
-        </div>
-
-        <!-- Preview column -->
-        <div class="image-studio-preview">
-          <div class="canvas-frame">
-            <canvas
-              id="imageCanvas"
-              width="1024"
-              height="1024"
-              aria-label="Generated image preview"
-            ></canvas>
-          </div>
-          <p class="small-note">
-            Tip: Start with a strong noun phrase like
-            <em>“loud launch card for the J GIL Brothers community”</em>, then flip between
-            Artwork vs Brand and different style presets.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Session Gallery -->
-    <section class="section image-studio-gallery-section">
-      <div class="container">
-        <header class="section-header">
-          <h2 class="section-title">Session Gallery</h2>
-          <p class="section-lead">
-            Saved images from this browser session only. Refreshing the page clears them.
-          </p>
-        </header>
-
-        <p id="galleryEmpty" class="gallery-empty">
-          No saved images yet. Generate something you like and hit
-          <strong>“Save to Gallery”.</strong>
+  <main class="tools-main">
+    <section class="section">
+      <div class="section-inner">
+        <h1>J GIL AI Tools</h1>
+        <p class="section-lede">
+          Free, browser-native tools that run in your browser. This first release ships <strong>J GIL Image Studio</strong> —
+          a fast, deterministic placeholder renderer while we prep the full diffusion backend.
         </p>
+        <ul class="bulleted">
+          <li>Runs locally — no uploads, no servers.</li>
+          <li>No accounts, no credits, no sign-in wall.</li>
+          <li>Designed for artwork concepts and brand-style mockups.</li>
+        </ul>
+      </div>
+    </section>
 
-        <div
-          id="galleryGrid"
-          class="gallery-grid"
-          aria-live="polite"
-        ></div>
+    <section class="section section-alt">
+      <div class="section-inner image-studio-layout">
+        <div class="studio-left">
+          <h2>J GIL Image Studio (v1)</h2>
+          <p class="section-lede">
+            A structured playground for cover art, thumbnails, and logo-style layouts. This v1 uses a pure
+            <strong>HTML canvas placeholder engine</strong>, all in your browser.
+          </p>
+
+          <form id="image-studio-form" class="studio-form" autocomplete="off">
+            <label for="prompt-input" class="field-label">Prompt</label>
+            <textarea id="prompt-input" class="text-input" rows="4" placeholder="Example: bold cover art for a late-night creator studio, sharp typography, deep blues, electric orange accents."></textarea>
+            <p class="field-help">Describe the vibe, subject, and energy. The renderer uses your text to drive layout, color, and composition.</p>
+
+            <fieldset class="field-group">
+              <legend class="field-label">Mode</legend>
+              <div class="pill-row">
+                <label class="pill">
+                  <input type="radio" name="mode" value="artwork" checked>
+                  <span>Artwork Mode</span>
+                </label>
+                <label class="pill">
+                  <input type="radio" name="mode" value="brand">
+                  <span>Brand Mode</span>
+                </label>
+              </div>
+              <p class="field-help">
+                Artwork: posters, scenes, experimental visuals.
+                Brand: simple, logo-like layouts.
+              </p>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend class="field-label">Style Presets</legend>
+              <div class="chip-row" id="style-chips">
+                <button type="button" class="chip" data-style="boldPoster">Bold Poster</button>
+                <button type="button" class="chip" data-style="cleanWordmark">Clean Wordmark</button>
+                <button type="button" class="chip" data-style="iconOnly">Icon-Only</button>
+                <button type="button" class="chip" data-style="monochrome">Monochrome</button>
+                <button type="button" class="chip" data-style="softGradient">Soft Gradient</button>
+              </div>
+              <p class="field-help">Presets can be combined. Try Bold Poster + Soft Gradient or Icon-Only + Monochrome.</p>
+            </fieldset>
+
+            <div class="field-row">
+              <div class="field-half">
+                <label for="canvas-size" class="field-label">Canvas Size</label>
+                <select id="canvas-size" class="select-input">
+                  <option value="square" selected>Square (1024×1024)</option>
+                  <option value="portrait">Portrait (768×1024)</option>
+                  <option value="landscape">Landscape (1024×768)</option>
+                </select>
+              </div>
+              <div class="field-half">
+                <label for="detail-level" class="field-label">Detail Level</label>
+                <select id="detail-level" class="select-input">
+                  <option value="fast">Fast</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="high">High Detail</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="actions-row">
+              <button type="button" id="generate-btn" class="button button-primary">Generate Image</button>
+              <span id="status-message" class="status-message" aria-live="polite"></span>
+            </div>
+          </form>
+
+          <div class="actions-row secondary-actions">
+            <button type="button" id="download-btn" class="button button-secondary">Download PNG</button>
+            <button type="button" id="save-btn" class="button button-secondary">Save to Gallery</button>
+            <button type="button" id="clear-btn" class="button button-ghost">Clear &amp; Try Again</button>
+          </div>
+
+          <p class="field-help">
+            Images are generated directly in this browser tab. Nothing is uploaded or stored on a server.
+          </p>
+        </div>
+
+        <div class="studio-right">
+          <div class="canvas-frame">
+            <canvas id="preview-canvas" width="1024" height="1024"></canvas>
+            <div class="canvas-placeholder" id="canvas-placeholder">
+              <p>Your image will appear here</p>
+              <p class="canvas-placeholder-sub">Start with a prompt on the left and hit Generate.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <h2>Session Gallery</h2>
+        <p class="section-lede">
+          Saved images live only in this tab. Refresh the page and they’re gone — perfect for quick sketching without long-term storage.
+        </p>
+        <p id="gallery-empty" class="muted">No saved images yet. Generate something and hit “Save to Gallery”.</p>
+        <div id="gallery-grid" class="gallery-grid"></div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <p class="footer-copy">
-        © <span id="footerYear"></span> J GIL Brothers. All rights reserved.
-      </p>
+    <div class="site-footer-inner">
+      <p>&copy; <span id="year-tools"></span> J GIL Brothers. J GIL Image Studio is an early experiment — expect it to change.</p>
     </div>
   </footer>
 
-  <!-- Small helper for footer year; no dependency on main JS -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var yearEl = document.getElementById('footerYear');
-      if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
+    (function () {
+      var el = document.getElementById('year-tools');
+      if (el) {
+        el.textContent = new Date().getFullYear();
       }
-    });
+    })();
   </script>
-
-  <!-- Image Studio logic -->
-  <script src="/js/image-studio.js" defer></script>
 </body>
 </html>

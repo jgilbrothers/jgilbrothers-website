@@ -1,410 +1,555 @@
-// J GIL Image Studio - Placeholder Canvas Engine
-// Pure front-end, no servers, no external APIs.
+// J GIL Image Studio v1
+// Pure front-end placeholder renderer: deterministic canvas art, no servers.
 
 (function () {
-  document.addEventListener('DOMContentLoaded', init);
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
 
-  function init() {
-    var form = document.getElementById('image-studio-form');
-    var promptInput = document.getElementById('prompt-input');
-    var canvas = document.getElementById('preview-canvas');
-    var canvasPlaceholder = document.getElementById('canvas-placeholder');
-    var sizeSelect = document.getElementById('canvas-size');
-    var detailSelect = document.getElementById('detail-level');
-    var chipsContainer = document.getElementById('style-chips');
-    var statusMessage = document.getElementById('status-message');
-    var galleryGrid = document.getElementById('gallery-grid');
-    var galleryEmpty = document.getElementById('gallery-empty');
+  function hashString(input) {
+    var str = String(input || "");
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    if (!hash) hash = 1;
+    return hash;
+  }
 
-    var generateBtn = document.getElementById('generate-btn');
-    var downloadBtn = document.getElementById('download-btn');
-    var saveBtn = document.getElementById('save-btn');
-    var clearBtn = document.getElementById('clear-btn');
+  function createRng(seedInput) {
+    var seed = hashString(seedInput);
+    return function nextRandom() {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+  }
 
-    if (!canvas || !canvas.getContext) {
+  function getSelectedRadioValue(name, fallback) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : fallback;
+  }
+
+  function getCanvasSize(sizeValue) {
+    if (sizeValue === "portrait") {
+      return { width: 768, height: 1024, label: "Portrait 768×1024" };
+    }
+    if (sizeValue === "landscape") {
+      return { width: 1024, height: 768, label: "Landscape 1024×768" };
+    }
+    return { width: 1024, height: 1024, label: "Square 1024×1024" };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Palette + Drawing
+  // ---------------------------------------------------------------------------
+
+  function choosePalette(rng, mode, style) {
+    var sets = [
+      { bg: "#020617", accent: "#38bdf8", accent2: "#f97316", text: "#e5e7eb" },
+      { bg: "#020617", accent: "#6366f1", accent2: "#22c55e", text: "#f9fafb" },
+      { bg: "#020617", accent: "#fb7185", accent2: "#38bdf8", text: "#f3f4f6" },
+      { bg: "#020617", accent: "#a855f7", accent2: "#ecfeff", text: "#e5e7eb" },
+      { bg: "#020617", accent: "#22c55e", accent2: "#a5b4fc", text: "#e5e7eb" }
+    ];
+    var base = sets[Math.floor(rng() * sets.length)];
+    var palette = {
+      bg: base.bg,
+      accent: base.accent,
+      accent2: base.accent2,
+      text: base.text
+    };
+
+    if (style === "monochrome") {
+      palette.accent2 = palette.accent;
+      palette.text = "#e5e7eb";
+    } else if (style === "softGradient") {
+      palette.bg = "#020617";
+    }
+
+    if (mode === "brand") {
+      palette.accent2 = "#64748b";
+    }
+
+    return palette;
+  }
+
+  function drawBackground(ctx, canvas, rng, palette, mode, style) {
+    var w = canvas.width;
+    var h = canvas.height;
+
+    if (style === "softGradient") {
+      var grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, palette.accent);
+      grad.addColorStop(0.5, palette.accent2);
+      grad.addColorStop(1, palette.bg);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
       return;
     }
 
-    var ctx = canvas.getContext('2d');
-    var activeStyles = new Set();
-    var gallery = [];
-
-    // Style chips
-    if (chipsContainer) {
-      chipsContainer.addEventListener('click', function (e) {
-        if (e.target && e.target.matches('button.chip')) {
-          var chip = e.target;
-          var style = chip.getAttribute('data-style');
-          if (!style) return;
-          if (chip.classList.contains('chip-active')) {
-            chip.classList.remove('chip-active');
-            activeStyles.delete(style);
-          } else {
-            chip.classList.add('chip-active');
-            activeStyles.add(style);
-          }
-        }
-      });
+    if (style === "monochrome") {
+      ctx.fillStyle = palette.bg;
+      ctx.fillRect(0, 0, w, h);
+      return;
     }
 
-    if (generateBtn) {
-      generateBtn.addEventListener('click', function () {
-        var prompt = (promptInput && promptInput.value || '').trim();
-        if (!prompt) {
-          setStatus('Add a short prompt first.');
-          return;
-        }
-        var mode = getMode();
-        var size = sizeSelect ? sizeSelect.value : 'square';
-        var detail = detailSelect ? detailSelect.value : 'balanced';
+    var split = 0.35 + rng() * 0.25;
+    if (mode === "brand") split = 0.3;
+    var vertical = rng() > 0.5;
 
-        setStatus('Generating…');
-        renderPlaceholder(canvas, ctx, {
-          prompt: prompt,
-          mode: mode,
-          size: size,
-          detail: detail,
-          styles: Array.from(activeStyles)
+    ctx.fillStyle = palette.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = palette.accent;
+    if (vertical) {
+      ctx.fillRect(0, 0, w * split, h);
+    } else {
+      ctx.fillRect(0, 0, w, h * split);
+    }
+
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = palette.accent2;
+    ctx.fillRect(w * 0.1, h * 0.2, w * 0.8, h * 0.6);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawShapes(ctx, canvas, rng, palette, mode, detail) {
+    var w = canvas.width;
+    var h = canvas.height;
+    var base = mode === "brand" ? 3 : 5;
+    var extra = detail === "highDetail" ? 4 : detail === "balanced" ? 2 : 0;
+    var n = base + extra;
+
+    for (var i = 0; i < n; i++) {
+      var t = rng();
+      var x = w * (0.15 + rng() * 0.7);
+      var y = h * (0.15 + rng() * 0.7);
+
+      if (mode === "brand") {
+        x = w * (0.35 + rng() * 0.3);
+        y = h * (0.3 + rng() * 0.25);
+      }
+
+      var primary = i % 2 === 0;
+      ctx.globalAlpha = primary ? 0.9 : 0.55;
+      ctx.fillStyle = primary ? palette.accent : palette.accent2;
+
+      if (t < 0.35) {
+        // Circle
+        var r = (Math.min(w, h) *
+          (mode === "brand" ? 0.09 : 0.13) *
+          (0.7 + rng() * 0.6));
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (t < 0.7) {
+        // Bar
+        var bw = w * (mode === "brand" ? 0.22 : 0.32) * (0.8 + rng() * 0.6);
+        var bh = h * 0.04 * (0.7 + rng() * 0.9);
+        var angle = (rng() - 0.5) * (mode === "brand" ? 0.3 : 0.7);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
+        ctx.restore();
+      } else {
+        // Rect
+        var rw = w * 0.18 * (0.7 + rng() * 0.9);
+        var rh = h * 0.12 * (0.7 + rng() * 0.9);
+        ctx.fillRect(x - rw / 2, y - rh / 2, rw, rh);
+      }
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    var words = text.split(/\s+/);
+    var line = "";
+    for (var i = 0; i < words.length; i++) {
+      var test = line ? line + " " + words[i] : words[i];
+      var width = ctx.measureText(test).width;
+      if (width > maxWidth && i > 0) {
+        ctx.fillText(line, x, y);
+        line = words[i];
+        y += lineHeight;
+      } else {
+        line = test;
+      }
+    }
+    if (line) ctx.fillText(line, x, y);
+  }
+
+  function drawTitle(ctx, canvas, palette, mode, detail, prompt) {
+    var w = canvas.width;
+    var h = canvas.height;
+    var text = (prompt || "").trim();
+    var maxChars = detail === "highDetail" ? 90 : 70;
+
+    if (!text) {
+      text = "J GIL Image Studio";
+    } else if (text.length > maxChars) {
+      text = text.slice(0, maxChars - 1) + "…";
+    }
+
+    var baseSize = mode === "brand" ? 0.055 : 0.065;
+    var fontSize = Math.round(h * baseSize);
+    if (detail === "highDetail") fontSize = Math.round(fontSize * 0.95);
+
+    ctx.fillStyle = palette.text;
+    ctx.font =
+      "600 " +
+      fontSize +
+      "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
+    ctx.textAlign = mode === "brand" ? "center" : "left";
+
+    var lineHeight = fontSize * 1.25;
+    var marginX = mode === "brand" ? w * 0.12 : w * 0.1;
+    var maxWidth = mode === "brand" ? w - marginX * 2 : w * 0.6;
+    var startX = mode === "brand" ? w / 2 : marginX;
+    var startY = mode === "brand" ? h * 0.56 : h * 0.74;
+
+    wrapText(ctx, text, startX, startY, maxWidth, lineHeight);
+
+    if (mode === "brand") {
+      ctx.font =
+        "500 " +
+        Math.round(fontSize * 0.45) +
+        "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
+      ctx.fillStyle = "rgba(226, 232, 240, 0.86)";
+      ctx.textAlign = "center";
+      ctx.fillText("J GIL Brothers", w / 2, startY + lineHeight * 1.6);
+    }
+  }
+
+  function clearCanvasPlaceholder(ctx, canvas) {
+    var w = canvas.width;
+    var h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    var grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, "#020617");
+    grad.addColorStop(1, "#020617");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.6)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 8]);
+    var pad = Math.round(Math.min(w, h) * 0.08);
+    ctx.strokeRect(pad, pad, w - pad * 2, h - pad * 2);
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "rgba(148, 163, 184, 0.9)";
+    var fontSize = Math.round(Math.min(w, h) * 0.045);
+    ctx.font =
+      "500 " +
+      fontSize +
+      "px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Your image will appear here", w / 2, h / 2);
+  }
+
+  function loadImageIntoCanvas(canvas, ctx, src, callback) {
+    var img = new Image();
+    img.onload = function () {
+      var w = img.naturalWidth || img.width;
+      var h = img.naturalHeight || img.height;
+      if (!w || !h) {
+        if (callback) callback(false);
+        return;
+      }
+      canvas.width = w;
+      canvas.height = h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      if (callback) callback(true);
+    };
+    img.onerror = function () {
+      if (callback) callback(false);
+    };
+    img.src = src;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Main logic
+  // ---------------------------------------------------------------------------
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("imageStudioForm");
+    var promptInput = document.getElementById("prompt");
+    var styleButtons = Array.prototype.slice.call(
+      document.querySelectorAll(".chip-style")
+    );
+    var generateBtn = document.getElementById("generateBtn");
+    var downloadBtn = document.getElementById("downloadBtn");
+    var saveBtn = document.getElementById("saveBtn");
+    var clearBtn = document.getElementById("clearBtn");
+    var galleryGrid = document.getElementById("galleryGrid");
+    var galleryEmpty = document.getElementById("galleryEmpty");
+
+    var canvas = document.getElementById("imageCanvas");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+
+    var selectedStyle = "boldPoster";
+    var hasGeneratedImage = false;
+    var savedImages = [];
+
+    function updateGenerateState() {
+      var hasPrompt =
+        promptInput && promptInput.value && promptInput.value.trim().length > 0;
+      if (generateBtn) generateBtn.disabled = !hasPrompt;
+    }
+
+    function updateActionButtons() {
+      var disabled = !hasGeneratedImage;
+      if (downloadBtn) downloadBtn.disabled = disabled;
+      if (saveBtn) saveBtn.disabled = disabled;
+    }
+
+    function getSettings() {
+      var prompt = promptInput ? promptInput.value.trim() : "";
+      var mode = getSelectedRadioValue("mode", "artwork");
+      var style = selectedStyle || "boldPoster";
+      var sizeValue = getSelectedRadioValue("size", "square");
+      var detail = getSelectedRadioValue("detail", "balanced");
+      var size = getCanvasSize(sizeValue);
+
+      return {
+        prompt: prompt,
+        mode: mode,
+        style: style,
+        sizeValue: sizeValue,
+        size: size,
+        detail: detail
+      };
+    }
+
+    function render() {
+      var settings = getSettings();
+      if (!settings.prompt) return;
+
+      canvas.width = settings.size.width;
+      canvas.height = settings.size.height;
+
+      var seedKey =
+        settings.prompt.toLowerCase() +
+        "|" +
+        settings.mode +
+        "|" +
+        settings.style +
+        "|" +
+        settings.sizeValue +
+        "|" +
+        settings.detail;
+
+      var rng = createRng(seedKey);
+      var palette = choosePalette(rng, settings.mode, settings.style);
+
+      drawBackground(ctx, canvas, rng, palette, settings.mode, settings.style);
+      drawShapes(ctx, canvas, rng, palette, settings.mode, settings.detail);
+      drawTitle(
+        ctx,
+        canvas,
+        palette,
+        settings.mode,
+        settings.detail,
+        settings.prompt
+      );
+
+      hasGeneratedImage = true;
+      updateActionButtons();
+    }
+
+    function clearAll() {
+      if (promptInput) promptInput.value = "";
+      updateGenerateState();
+      hasGeneratedImage = false;
+      updateActionButtons();
+
+      canvas.width = 1024;
+      canvas.height = 1024;
+      clearCanvasPlaceholder(ctx, canvas);
+    }
+
+    function triggerDownload() {
+      if (!hasGeneratedImage) return;
+
+      if (canvas.toBlob) {
+        canvas.toBlob(
+          function (blob) {
+            if (!blob) return;
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            var ts = new Date().toISOString().replace(/[:.]/g, "-");
+            a.download = "jgil-image-studio-" + ts + ".png";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          },
+          "image/png"
+        );
+      } else {
+        var data = canvas.toDataURL("image/png");
+        var link = document.createElement("a");
+        var ts2 = new Date().toISOString().replace(/[:.]/g, "-");
+        link.href = data;
+        link.download = "jgil-image-studio-" + ts2 + ".png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function addToGallery() {
+      if (!hasGeneratedImage || !galleryGrid) return;
+
+      var dataUrl = canvas.toDataURL("image/png");
+      var settings = getSettings();
+
+      savedImages.push({
+        url: dataUrl,
+        settings: settings,
+        createdAt: new Date()
+      });
+
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "gallery-item";
+
+      var img = document.createElement("img");
+      img.src = dataUrl;
+      img.alt =
+        "Saved image: " +
+        (settings.prompt ? settings.prompt.slice(0, 60) : "generated image");
+
+      var label = document.createElement("span");
+      label.className = "gallery-label";
+
+      var modeLabel = settings.mode === "brand" ? "Brand" : "Artwork";
+      var styleLabel;
+      switch (settings.style) {
+        case "cleanWordmark":
+          styleLabel = "Clean Wordmark";
+          break;
+        case "iconOnly":
+          styleLabel = "Icon Only";
+          break;
+        case "softGradient":
+          styleLabel = "Soft Gradient";
+          break;
+        case "monochrome":
+          styleLabel = "Monochrome";
+          break;
+        default:
+          styleLabel = "Bold Poster";
+      }
+      label.textContent = modeLabel + " • " + styleLabel;
+
+      button.appendChild(img);
+      button.appendChild(label);
+
+      button.addEventListener("click", function () {
+        loadImageIntoCanvas(canvas, ctx, dataUrl, function (ok) {
+          if (ok) {
+            hasGeneratedImage = true;
+            updateActionButtons();
+          }
         });
+      });
 
-        if (canvasPlaceholder) {
-          canvasPlaceholder.style.display = 'none';
+      if (galleryGrid.firstChild) {
+        galleryGrid.insertBefore(button, galleryGrid.firstChild);
+      } else {
+        galleryGrid.appendChild(button);
+      }
+
+      if (galleryEmpty) {
+        galleryEmpty.hidden = galleryGrid.children.length > 0;
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // Events
+    // -----------------------------------------------------------------------
+
+    if (promptInput) {
+      promptInput.addEventListener("input", updateGenerateState);
+    }
+
+    styleButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        styleButtons.forEach(function (b) {
+          b.classList.remove("is-selected");
+          b.setAttribute("aria-pressed", "false");
+        });
+        this.classList.add("is-selected");
+        this.setAttribute("aria-pressed", "true");
+        selectedStyle = this.getAttribute("data-style") || "boldPoster";
+      });
+    });
+
+    if (generateBtn) {
+      generateBtn.addEventListener("click", function () {
+        var settings = getSettings();
+        if (!settings.prompt) return;
+
+        try {
+          render();
+        } catch (err) {
+          canvas.width = 1024;
+          canvas.height = 1024;
+          clearCanvasPlaceholder(ctx, canvas);
+          ctx.save();
+          ctx.fillStyle = "rgba(239, 68, 68, 0.9)";
+          ctx.font =
+            "500 18px system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "Something glitched. Try generating again.",
+            canvas.width / 2,
+            canvas.height * 0.55
+          );
+          ctx.restore();
+          hasGeneratedImage = false;
+          updateActionButtons();
         }
-        setStatus('Done. You can download or save to gallery.');
       });
     }
 
     if (downloadBtn) {
-      downloadBtn.addEventListener('click', function () {
-        var dataUrl = canvas.toDataURL('image/png');
-        var link = document.createElement('a');
-        var stamp = new Date().toISOString().replace(/[:.]/g, '-');
-        link.download = 'jgil-image-studio-' + stamp + '.png';
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
+      downloadBtn.addEventListener("click", triggerDownload);
     }
 
     if (saveBtn) {
-      saveBtn.addEventListener('click', function () {
-        var dataUrl = canvas.toDataURL('image/png');
-        gallery.push(dataUrl);
-        refreshGallery(gallery, galleryGrid, galleryEmpty);
-        setStatus('Saved to this session\'s gallery.');
-      });
+      saveBtn.addEventListener("click", addToGallery);
     }
 
     if (clearBtn) {
-      clearBtn.addEventListener('click', function () {
-        clearCanvas(canvas, ctx);
-        if (canvasPlaceholder) {
-          canvasPlaceholder.style.display = 'flex';
-        }
-        if (promptInput) {
-          promptInput.value = '';
-        }
-        setStatus('Cleared. Add a new prompt and generate again.');
+      clearBtn.addEventListener("click", clearAll);
+    }
+
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
       });
     }
 
-    // Initial clear
-    clearCanvas(canvas, ctx);
+    // -----------------------------------------------------------------------
+    // Initial state
+    // -----------------------------------------------------------------------
 
-    function setStatus(msg) {
-      if (statusMessage) {
-        statusMessage.textContent = msg || '';
-      }
+    canvas.width = 1024;
+    canvas.height = 1024;
+    clearCanvasPlaceholder(ctx, canvas);
+    updateGenerateState();
+    updateActionButtons();
+    if (galleryEmpty) {
+      galleryEmpty.hidden = false;
     }
-
-    function getMode() {
-      var inputs = document.querySelectorAll('input[name="mode"]');
-      for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i].checked) return inputs[i].value;
-      }
-      return 'artwork';
-    }
-  }
-
-  function refreshGallery(items, container, emptyLabel) {
-    if (!container) return;
-    container.innerHTML = '';
-    if (!items.length) {
-      if (emptyLabel) emptyLabel.style.display = 'block';
-      return;
-    }
-    if (emptyLabel) emptyLabel.style.display = 'none';
-
-    items.forEach(function (dataUrl) {
-      var img = document.createElement('img');
-      img.src = dataUrl;
-      container.appendChild(img);
-    });
-  }
-
-  function clearCanvas(canvas, ctx) {
-    if (!canvas || !ctx) return;
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // subtle base background
-    var grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, '#050814');
-    grad.addColorStop(1, '#10162b');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
-  }
-
-  // Placeholder render engine
-
-  function renderPlaceholder(canvas, ctx, opts) {
-    if (!canvas || !ctx) return;
-    opts = opts || {};
-    var prompt = opts.prompt || '';
-    var mode = opts.mode || 'artwork';
-    var size = opts.size || 'square';
-    var detail = opts.detail || 'balanced';
-    var styles = opts.styles || [];
-
-    // canvas size
-    if (size === 'square') {
-      canvas.width = 1024;
-      canvas.height = 1024;
-    } else if (size === 'portrait') {
-      canvas.width = 768;
-      canvas.height = 1024;
-    } else if (size === 'landscape') {
-      canvas.width = 1024;
-      canvas.height = 768;
-    }
-
-    var seed = hashString(prompt + '|' + mode + '|' + styles.sort().join(',') + '|' + size + '|' + detail);
-    var rand = mulberry32(seed);
-
-    clearCanvas(canvas, ctx);
-
-    var palettes = [
-      ['#4a90e2', '#d64545', '#f4f4f6', '#2b2b2b'],
-      ['#27ae60', '#4a90e2', '#e5e5e5', '#050814'],
-      ['#d64545', '#f39c12', '#f4f4f6', '#2b2b2b'],
-      ['#8e44ad', '#4a90e2', '#ecf0f1', '#050814']
-    ];
-    var palette = palettes[Math.floor(rand() * palettes.length)];
-
-    // Background gradient tweaks based on style
-    var bgStart = palette[0];
-    var bgEnd = palette[3];
-    if (styles.indexOf('monochrome') !== -1) {
-      bgStart = '#050814';
-      bgEnd = '#1e2239';
-    } else if (styles.indexOf('softGradient') !== -1) {
-      bgStart = palette[0];
-      bgEnd = palette[1];
-    }
-
-    var grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, bgStart);
-    grad.addColorStop(1, bgEnd);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Mode logic
-    if (mode === 'artwork') {
-      renderArtworkLayout(canvas, ctx, rand, palette, detail, styles);
-    } else {
-      renderBrandLayout(canvas, ctx, rand, palette, detail, styles);
-    }
-
-    // Prompt text overlay (subtle)
-    renderPromptTag(canvas, ctx, prompt, rand);
-  }
-
-  function renderArtworkLayout(canvas, ctx, rand, palette, detail, styles) {
-    var w = canvas.width;
-    var h = canvas.height;
-
-    var layers = detail === 'high' ? 18 : detail === 'balanced' ? 12 : 7;
-
-    for (var i = 0; i < layers; i++) {
-      var color = palette[Math.floor(rand() * palette.length)];
-      ctx.fillStyle = color;
-
-      var shapeType = rand();
-      var x = rand() * w;
-      var y = rand() * h;
-      var ww = (0.1 + rand() * 0.5) * w;
-      var hh = (0.1 + rand() * 0.4) * h;
-
-      ctx.save();
-      ctx.globalAlpha = 0.15 + rand() * 0.5;
-      ctx.translate(x, y);
-      ctx.rotate((rand() - 0.5) * Math.PI / 3);
-
-      if (shapeType < 0.4) {
-        ctx.fillRect(-ww / 2, -hh / 2, ww, hh);
-      } else if (shapeType < 0.7) {
-        ctx.beginPath();
-        ctx.arc(0, 0, ww / 2, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(-ww / 2, -hh / 2);
-        ctx.lineTo(ww / 2, -hh / 3);
-        ctx.lineTo(0, hh / 2);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-
-    // Extra high-detail lines
-    if (detail === 'high') {
-      ctx.save();
-      ctx.strokeStyle = 'rgba(244,244,246,0.18)';
-      ctx.lineWidth = 1;
-      var count = 22;
-      for (var j = 0; j < count; j++) {
-        ctx.beginPath();
-        ctx.moveTo(rand() * w, rand() * h);
-        ctx.lineTo(rand() * w, rand() * h);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-  }
-
-  function renderBrandLayout(canvas, ctx, rand, palette, detail, styles) {
-    var w = canvas.width;
-    var h = canvas.height;
-
-    // Big centered icon
-    var iconSize = Math.min(w, h) * 0.32;
-    var cx = w / 2;
-    var cy = h / 2 - iconSize * 0.15;
-
-    // Outer ring
-    ctx.save();
-    ctx.globalAlpha = 0.9;
-    ctx.fillStyle = palette[2];
-    ctx.beginPath();
-    ctx.arc(cx, cy, iconSize / 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Inner symbol
-    ctx.save();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = palette[1];
-    ctx.beginPath();
-    ctx.moveTo(cx - iconSize * 0.25, cy + iconSize * 0.1);
-    ctx.lineTo(cx, cy - iconSize * 0.25);
-    ctx.lineTo(cx + iconSize * 0.25, cy + iconSize * 0.1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
-    if (styles.indexOf('iconOnly') === -1) {
-      // Wordmark bar
-      var barWidth = iconSize * 1.5;
-      var barHeight = iconSize * 0.22;
-      var barX = cx - barWidth / 2;
-      var barY = cy + iconSize * 0.4;
-
-      ctx.save();
-      ctx.fillStyle = 'rgba(5, 8, 20, 0.8)';
-      ctx.fillRect(barX, barY, barWidth, barHeight);
-
-      ctx.fillStyle = palette[2];
-      ctx.font = Math.round(barHeight * 0.45) + 'px system-ui, sans-serif';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText('J GIL MOCKUP', cx, barY + barHeight / 2);
-      ctx.restore();
-
-      if (detail !== 'fast') {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(244,244,246,0.2)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(barX, barY, barWidth, barHeight);
-        ctx.restore();
-      }
-    }
-
-    // Optional monochrome overlay
-    if (styles.indexOf('monochrome') !== -1) {
-      ctx.save();
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      ctx.fillRect(0, 0, w, h);
-      ctx.restore();
-    }
-  }
-
-  function renderPromptTag(canvas, ctx, prompt, rand) {
-    if (!prompt) return;
-    var w = canvas.width;
-    var h = canvas.height;
-
-    var short = prompt.length > 40 ? prompt.slice(0, 37) + '…' : prompt;
-
-    ctx.save();
-    ctx.globalAlpha = 0.8;
-    ctx.fillStyle = 'rgba(5, 8, 20, 0.9)';
-    var paddingX = 14;
-    var paddingY = 8;
-    ctx.font = '13px system-ui, sans-serif';
-    var textWidth = ctx.measureText(short).width;
-    var boxWidth = textWidth + paddingX * 2;
-    var boxHeight = 26;
-
-    var margin = 18;
-    var x = w - boxWidth - margin;
-    var y = h - boxHeight - margin;
-
-    roundRect(ctx, x, y, boxWidth, boxHeight, 14);
-    ctx.fill();
-
-    ctx.fillStyle = '#f4f4f6';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    ctx.fillText(short, x + paddingX, y + boxHeight / 2);
-    ctx.restore();
-  }
-
-  function roundRect(ctx, x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  }
-
-  // Hash + PRNG helpers
-
-  function hashString(str) {
-    var h = 2166136261 >>> 0;
-    for (var i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
-  function mulberry32(a) {
-    return function () {
-      var t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
+  });
 })();

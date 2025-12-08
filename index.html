@@ -5,7 +5,7 @@
   <title>J GIL Brothers | AI Branding & Content Studio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="J GIL Brothers is an AI-powered content and branding studio for creators. Build visuals, automate content, and grow your brand with free tools and creator-first support.">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
   <!-- Site Header -->
@@ -13,12 +13,14 @@
     <div class="container header-inner">
       <a href="/" class="site-logo">
         <!-- MAIN LOGO -->
-        <img src="/images/jgil-brothers-logo-2025.png"
-             alt="J GIL Brothers logo"
-             class="logo-image">
+        <img
+          src="/assets/images/jgil-brothers-logo-2025.png"
+          alt="J GIL Brothers logo"
+          class="logo-image"
+        >
       </a>
 
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Main navigation">
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/about/">About</a></li>
@@ -35,23 +37,22 @@
     <section class="hero">
       <div class="container hero-inner">
         <div class="hero-copy">
+          <p class="eyebrow">AI-powered content & brand studio</p>
           <h1>You’ve got the vision. We’ve got the audacity to build it.</h1>
-          <p>
-            J GIL Brothers is an AI-powered content and branding studio for creators
-            who refuse to play small. Build visuals, automate your content, and
-            turn your ideas into assets.
+          <p class="hero-subtitle">
+            J GIL Brothers is a creator-first studio for people who refuse to play small.
+            Use our AI tools, systems, and support to turn ideas into visual assets,
+            content engines, and a brand people remember.
           </p>
 
           <div class="hero-ctas">
             <!-- CTA 1: FREE AI TOOLS -->
-            <a class="btn primary"
-               href="/tools/">
+            <a class="btn primary" href="/tools/">
               Explore Free AI Tools
             </a>
 
             <!-- CTA 2: CREATORS HUB -->
-            <a class="btn secondary"
-               href="/creators-hub/">
+            <a class="btn secondary" href="/creators-hub/">
               Join the Creators Hub
             </a>
           </div>
@@ -62,12 +63,61 @@
           </p>
         </div>
 
-        <!-- OPTIONAL HERO IMAGE PLACEHOLDER -->
+        <!-- HERO ART / VISUAL ANCHOR -->
         <div class="hero-art">
-          <!-- If you ever want a hero image separate from the logo, drop it here -->
-          <!-- Example:
-          <img src="/images/home-hero-art.jpg" alt="Creators working with AI tools">
-          -->
+          <div class="hero-art-card">
+            <p class="hero-art-label">Neo-Durham Energy</p>
+            <p class="hero-art-text">
+              Built for bold, community-driven creators who want their brand to actually live
+              in people’s heads — not just on a mood board.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PATHWAYS -->
+    <section class="section pathways">
+      <div class="container">
+        <h2>Pick your starting point</h2>
+        <p class="section-intro">
+          Two main ways to build with J GIL Brothers. Start free, stay scrappy, and
+          level up into done-with-you or done-for-you studio support when you’re ready.
+        </p>
+
+        <div class="cards-grid">
+          <article class="card">
+            <h3>Free AI Tools</h3>
+            <p>
+              Templates, prompts, and automation starters to help you design visuals,
+              plan content, and move faster without hiring a full team.
+            </p>
+            <a href="/tools/" class="link-arrow">
+              Open the tools library →
+            </a>
+          </article>
+
+          <article class="card">
+            <h3>Creators Hub</h3>
+            <p>
+              A home base for builders: playbooks, experiments, and behind-the-scenes
+              notes as we build this studio in public with you.
+            </p>
+            <a href="/creators-hub/" class="link-arrow">
+              Step into the Hub →
+            </a>
+          </article>
+
+          <article class="card">
+            <h3>Studio / Services</h3>
+            <p>
+              When it’s time to look and move like a real brand, we help with visual
+              identity, content systems, and AI-powered workflows.
+            </p>
+            <a href="/studio/" class="link-arrow">
+              Explore studio offerings →
+            </a>
+          </article>
         </div>
       </div>
     </section>
@@ -79,14 +129,14 @@
         <p>
           J GIL Brothers is a creator-first AI branding and content studio
           built in Neo-Durham spirit: bold, honest, and community-driven.
-          We combine human storytelling, design instincts, and automation
-          so you can build a brand that actually lives in people’s heads,
-          not just on a mood board.
+          We combine human storytelling, design instincts, and smart automation
+          so your brand doesn’t just look good — it works.
         </p>
         <p>
           Whether you’re just starting, rebuilding, or leveling up, our tools,
           templates, and support are designed to meet you where you are
-          and grow with you.
+          and grow with you. The goal is simple: fewer stuck ideas, more
+          shipped assets.
         </p>
       </div>
     </section>
@@ -94,7 +144,7 @@
     <!-- TESTIMONIALS / VOICES OF THE COMMUNITY -->
     <section class="section testimonials">
       <div class="container">
-        <h2>Voices of the Community</h2>
+        <h2>Voices of the community</h2>
         <p class="section-intro">
           Real creators. Real results. Here’s what people are saying about
           building with J GIL Brothers.
@@ -102,8 +152,6 @@
 
         <div class="testimonial-grid">
           <article class="testimonial-card">
-            <!-- Optional avatar/logo -->
-            <!-- <img src="/images/testimonial-1.jpg" alt="Creator photo" class="testimonial-avatar"> -->
             <p class="testimonial-quote">
               “J GIL Brothers helped me turn scattered ideas into a real brand.
               The automation and visuals saved me weeks of work.”
@@ -112,7 +160,6 @@
           </article>
 
           <article class="testimonial-card">
-            <!-- <img src="/images/testimonial-2.jpg" alt="Creator photo" class="testimonial-avatar"> -->
             <p class="testimonial-quote">
               “I finally feel like my content looks as serious as my vision.
               The tools are simple, but the output feels premium.”
@@ -121,7 +168,6 @@
           </article>
 
           <article class="testimonial-card">
-            <!-- <img src="/images/testimonial-3.jpg" alt="Creator photo" class="testimonial-avatar"> -->
             <p class="testimonial-quote">
               “The mix of free tools and real guidance is different.
               It feels like a small studio that actually cares if I win.”
@@ -148,9 +194,10 @@
         </div>
 
         <div class="brand-yourself-image">
-          <!-- BLOG IMAGE PLACEHOLDER -->
-          <img src="/images/brand-yourself-cover.jpg"
-               alt="Brand Yourself blog cover (placeholder)">
+          <img
+            src="/assets/images/brand-yourself-cover.jpg"
+            alt="Brand Yourself blog cover (placeholder)"
+          >
         </div>
       </div>
     </section>
@@ -159,17 +206,22 @@
     <section class="section founders-art">
       <div class="container founders-inner">
         <div class="founders-text">
-          <h2>J GIL Brothers Founders Concept Art</h2>
+          <h2>J GIL Brothers founders concept art</h2>
           <p>
             The J GIL Brothers silhouettes represent legacy, audacity, and
             the promise that your ideas won’t die in your Notes app.
             This is the visual anchor for everything we build.
           </p>
+          <p>
+            As the studio grows, this icon becomes the north star:
+            a reminder that bold ideas from small corners can still shift cultures.
+          </p>
         </div>
         <div class="founders-image">
-          <!-- FOUNDERS ART PLACEHOLDER -->
-          <img src="/images/founders-concept-art.jpg"
-               alt="J GIL Brothers founders concept art (placeholder)">
+          <img
+            src="/assets/images/founders-concept-art.jpg"
+            alt="J GIL Brothers founders concept art (placeholder)"
+          >
         </div>
       </div>
     </section>
@@ -182,10 +234,8 @@
         Built with audacity for creators who refuse to play small.
       </p>
     </div>
-    <script>
-      // keep footer year current
-      document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
   </footer>
+
+  <script src="/scripts/main.js" defer></script>
 </body>
 </html>

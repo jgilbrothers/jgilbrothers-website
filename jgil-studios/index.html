@@ -1,228 +1,143 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>J GIL Studios | Portfolio by J GIL Brothers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="J GIL Studios is the visual portfolio of J GIL Brothers — logos, artwork, story visuals, and content experiments built with audacity.">
-  <meta property="og:title" content="J GIL Studios | Portfolio by J GIL Brothers">
-  <meta property="og:description" content="Explore the J GIL Studios portfolio: logos, artwork, content sequences, and AI-powered visuals created for bold brands.">
-  <meta property="og:url" content="https://jgilbrothers.com/jgil-studios/">
-  <meta property="og:type" content="website">
-  <meta name="robots" content="index,follow">
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <!-- Site Header -->
-  <header class="site-header">
-    <div class="container">
-      <div class="site-header-inner">
-        <a href="/" class="site-logo">J GIL Brothers</a>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>J GIL Studio — J GIL Brothers</title>
+  <meta name="description" content="J GIL Studio — the work archive. Series, experiments, and evolving visual worlds." />
+  <meta name="theme-color" content="#0b0b0c" />
 
-        <nav class="site-nav">
-          <a href="/" class="nav-link">Home</a>
-          <a href="/about/" class="nav-link">Our Vision (About Us)</a>
-          <a href="/tools/" class="nav-link">Free AI Tools</a>
-          <a href="/creators-hub/" class="nav-link">Creators Hub</a>
-          <a href="/jgil-studios/" class="nav-link nav-link-active">J GIL Studios</a>
-          <a href="/blog/" class="nav-link">Blog</a>
-        </nav>
-      </div>
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <script src="/scripts/main.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- GLOBAL HEADER -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="J GIL Brothers Home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">J GIL Brothers</span>
+          <span class="brand-tag">Content Creation Studio</span>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-lines" aria-hidden="true"></span>
+        <span class="sr-only">Menu</span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="/">Home</a></li>
+          <li><a class="nav-link" href="/about.html">About</a></li>
+          <li><a class="nav-link" href="/tools.html">Free AI Tools</a></li>
+          <li><a class="nav-link" href="/jgil-studio/">J GIL Studio</a></li>
+          <li><a class="nav-link" href="/creative-hub.html">Creative Hub</a></li>
+        </ul>
+      </nav>
     </div>
   </header>
 
-  <main>
-    <!-- Hero: J GIL Studios Intro -->
-    <section class="hero">
+  <!-- MAIN -->
+  <main id="main" class="site-main">
+    <section class="section hero" aria-label="J GIL Studio">
       <div class="container hero-grid">
-        <div class="hero-text">
-          <p class="hero-kicker">Studio Portfolio</p>
-          <h1 class="hero-title">
-            J GIL Studios — where logos, visuals, and stories grow up.
-          </h1>
+        <div class="hero-copy">
+          <p class="kicker">J GIL Studio</p>
+          <h1 class="hero-title">The Work Archive.</h1>
           <p class="hero-subtitle">
-            This is the visual home base for the work coming out of J GIL Brothers: logos, image
-            designs, story frames, short-form edits, and experimental content built with audacity.
+            This is where the output lives — series, experiments, and evolving visual worlds.
+            The structure stays fixed. The images evolve.
           </p>
 
-          <div class="hero-cta-row">
-            <a href="/creators-hub/" class="btn-primary">
-              Join the Creators Hub
-            </a>
-            <a href="/tools/" class="btn-secondary">
-              Try the Image Studio
-            </a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#series">View Series Frames</a>
+            <a class="btn btn-ghost" href="/tools.html">Create with Free AI Tools</a>
           </div>
-        </div>
 
-        <div class="hero-media">
-          <!-- Placeholder studio visual – swap this image when you're ready -->
-          <img src="/images/jgil-studios-placeholder.png"
-               alt="J GIL Studios portfolio collage"
-               class="hero-image">
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: Portfolio Buckets -->
-    <section class="home-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">What lives inside J GIL Studios</h2>
-          <p class="section-subtitle">
-            One studio, many lanes. As the portfolio grows, this page will house everything from raw logo
-            explorations to cinematic story shots and social-ready clips.
+          <p class="hero-note">
+            Blog and Services will live under this section later — without restructuring the site.
           </p>
         </div>
 
-        <div class="feature-grid">
-          <article class="feature-card">
-            <h3>Logo &amp; Mark Concepts</h3>
-            <p>
-              Early sketches, finished marks, and alternate logo directions.
-              This lane is for the symbols that represent a brand at a glance.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <h3>Image Design &amp; Artwork</h3>
-            <p>
-              Standalone visuals, character concepts, cover art, and image stories
-              built with AI tools and manual edits layered on top.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <h3>Story Frames &amp; Sequences</h3>
-            <p>
-              Still frames and sequences that hint at bigger stories —
-              future animation, trailers, or world-building visuals.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <h3>Short-form Content Clips</h3>
-            <p>
-              Social-ready clips, micro-edits, and experimental cuts pulled from
-              larger videos — the pieces designed to actually move on the timeline.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: Visual Grid Placeholder -->
-    <section class="home-section home-section-alt">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Studio Highlights</h2>
-          <p class="section-subtitle">
-            As new pieces are finalized, they’ll be dropped into this grid. For now, think of this as the
-            scaffolding for a living gallery that will keep evolving.
-          </p>
-        </div>
-
-        <div class="blog-card">
-          <div class="blog-card-media">
-            <!-- Swap these placeholders with real thumbnails when you’re ready -->
-            <img src="/images/studio-highlight-placeholder.png"
-                 alt="J GIL Studios highlight placeholder"
-                 class="blog-card-image">
-          </div>
-          <div class="blog-card-body">
-            <h3 class="blog-card-title">First Collection Drop (Coming Soon)</h3>
-            <p class="blog-card-text">
-              This space will showcase a curated batch of work — a mix of logos, image sets,
-              and short video cuts that tell the story of where J GIL Studios started.
-            </p>
-            <p class="blog-card-meta">
-              Updated as new projects ship. Early on, expect a smaller set of pieces;
-              over time, this becomes the “best of” board for the studio.
-            </p>
-            <a href="/creators-hub/" class="btn-link">
-              Get notified when new work drops →
-            </a>
+        <div class="hero-frame" aria-label="Studio hero image slot (added later)">
+          <div class="frame-inner">
+            <div class="frame-label">
+              <span class="pill">Image Slot</span>
+              <span class="frame-text">Primary studio artwork drops here.</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section: How to Work With the Studio -->
-    <section class="home-section">
+    <!-- SERIES GRID -->
+    <section id="series" class="section pillars" aria-label="Studio series">
       <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">How to work with J GIL Studios</h2>
+        <div class="section-head">
+          <h2 class="section-title">Studio Series</h2>
           <p class="section-subtitle">
-            There are two ways to move with us: browse what we’ve built, or plug into the ecosystem
-            and build your own through the Creators Hub and free tools.
+            Each frame is designed to accept uploaded images from <code>/assets/images/jgil-studios/</code>.
           </p>
         </div>
 
-        <div class="feature-grid">
-          <article class="feature-card">
-            <h3>1. Explore the portfolio</h3>
-            <p>
-              Use this page to get a feel for the studio’s visual language:
-              how we use color, composition, storytelling, and motion.
-            </p>
+        <div class="pillars-grid">
+          <article class="pillar">
+            <p class="pillar-kicker">01</p>
+            <h3 class="pillar-title">Noir</h3>
+            <p class="pillar-text">High-contrast, cinematic, disciplined shadow work.</p>
+            <span class="text-link">Image slot</span>
           </article>
 
-          <article class="feature-card">
-            <h3>2. Build alongside us</h3>
-            <p>
-              Join the Creators Hub to get early access to tools, prompts, and behind-the-scenes
-              breakdowns of how these visuals are made.
-            </p>
+          <article class="pillar">
+            <p class="pillar-kicker">02</p>
+            <h3 class="pillar-title">Sketch</h3>
+            <p class="pillar-text">Draft canon. Structure before polish.</p>
+            <span class="text-link">Image slot</span>
           </article>
 
-          <article class="feature-card">
-            <h3>3. Commission or collaborate</h3>
-            <p>
-              As the studio opens up more, there will be clear paths for custom work, collabs,
-              and structured projects. For now, the Hub is where those doors will open first.
-            </p>
+          <article class="pillar">
+            <p class="pillar-kicker">03</p>
+            <h3 class="pillar-title">Classical</h3>
+            <p class="pillar-text">Old-world form translated through modern tools.</p>
+            <span class="text-link">Image slot</span>
           </article>
         </div>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section class="section closing" aria-label="Closing statement">
+      <div class="container closing-inner">
+        <p class="closing-line">The studio is the source.</p>
+        <p class="closing-sub">Everything else orbits the work.</p>
       </div>
     </section>
   </main>
 
-  <!-- Footer (same structure as main site) -->
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-column">
-        <h3 class="footer-title">J GIL Brothers</h3>
-        <p class="footer-text">
-          Community-driven AI branding and content creation studio based in Durham, NC.
-        </p>
+  <!-- GLOBAL FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <p class="footer-mark">J GIL Brothers</p>
+        <p class="footer-note">A content creation studio built on discipline, not hype.</p>
       </div>
 
-      <div class="footer-column">
-        <h4 class="footer-heading">Contact</h4>
-        <p class="footer-text">
-          Telephone: 917-994-4944<br>
-          Email us:
-          <a href="mailto:jgilbrothers@gmail.com">jgilbrothers@gmail.com</a><br>
-          Location: Durham NC 27707
-        </p>
-      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/tools.html">Free AI Tools</a>
+        <a href="/jgil-studio/">J GIL Studio</a>
+        <a href="/creative-hub.html">Creative Hub</a>
+      </nav>
 
-      <div class="footer-column">
-        <h4 class="footer-heading">Connect</h4>
-        <ul class="footer-links">
-          <li><a href="https://www.instagram.com/jgilbrothers/" target="_blank" rel="noopener">Instagram</a></li>
-          <li><a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://www.youtube.com/channel/UCrgX38Uu--Pq6vI2JnfHC0w" target="_blank" rel="noopener">YouTube</a></li>
-          <li><a href="https://www.tiktok.com" target="_blank" rel="noopener">TikTok</a></li>
-          <li><a href="https://discord.com" target="_blank" rel="noopener">Discord</a></li>
-        </ul>
+      <div class="footer-right">
+        <p class="footer-small">© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
       </div>
-    </div>
-
-    <div class="container footer-disclaimer">
-      <p class="footer-text">
-        © 2025 by J GIL Brothers. All rights reserved.
-      </p>
     </div>
   </footer>
 </body>

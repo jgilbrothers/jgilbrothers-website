@@ -12,100 +12,119 @@
 </head>
 
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="/">
-      <span class="brand-mark"></span>
-      <span class="brand-text">
-        <span class="brand-name">J GIL Brothers</span>
-        <span class="brand-tag">Content Creation Studio</span>
-      </span>
-    </a>
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="J GIL Brothers Home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">J GIL Brothers</span>
+          <span class="brand-tag">Content Creation Studio</span>
+        </span>
+      </a>
 
-    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">
-      <span class="nav-toggle-lines"></span>
-      <span class="sr-only">Menu</span>
-    </button>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-lines" aria-hidden="true"></span>
+        <span class="sr-only">Menu</span>
+      </button>
 
-    <nav id="site-nav" class="site-nav">
-      <ul class="nav-list">
-        <li><a class="nav-link" href="/">Home</a></li>
-        <li><a class="nav-link" href="/about.html">About</a></li>
-        <li><a class="nav-link" href="/tools.html">Free AI Tools</a></li>
-        <li><a class="nav-link" href="/jgil-studio/">J GIL Studio</a></li>
-        <li><a class="nav-link" href="/creative-hub.html">Creative Hub</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="/">Home</a></li>
+          <li><a class="nav-link" href="/about.html">About</a></li>
+          <li><a class="nav-link" href="/tools.html">Free AI Tools</a></li>
+          <li><a class="nav-link" href="/jgil-studios/">J GIL Studio</a></li>
+          <li><a class="nav-link" href="/creative-hub.html">Creative Hub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<main id="main" class="site-main">
-  <section class="section hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="kicker">Creative Hub</p>
-        <h1 class="hero-title">Where the Circle Builds.</h1>
-        <p class="hero-subtitle">
-          This space is for people connected to the work — not an open marketplace.
-        </p>
+  <main id="main" class="site-main">
+    <section class="section hero" aria-label="Creative Hub">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">Creative Hub</p>
+          <h1 class="hero-title">Where the Circle Builds.</h1>
+          <p class="hero-subtitle">
+            This space is for people connected to the work — not an open marketplace.
+          </p>
 
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/jgil-studio/">View the Work</a>
-          <a class="btn btn-ghost" href="/tools.html">Use Tools</a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/jgil-studios/">View the Work</a>
+            <a class="btn btn-ghost" href="/tools.html">Use Tools</a>
+          </div>
+
+          <p class="hero-note">
+            Next: we activate real modules (featured prompt, projects, curated drops).
+          </p>
         </div>
-      </div>
 
-      <div class="hero-frame">
-        <div class="frame-inner">
-          <div class="frame-label">
-            <span class="pill">Image Slot</span>
-            <span class="frame-text">Community visuals live here.</span>
+        <div class="hero-frame" aria-label="Hub image slot (added later)">
+          <div class="frame-inner">
+            <div class="frame-label">
+              <span class="pill">Image Slot</span>
+              <span class="frame-text">Community visuals live here.</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section manifesto">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-title">Hub Modules</h2>
-        <p class="section-subtitle">
-          These modules will be activated as the community grows.
-        </p>
+    <section class="section manifesto" aria-label="Hub modules">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Hub Modules</h2>
+          <p class="section-subtitle">
+            Placeholders now. We wire real content as you decide what the hub becomes.
+          </p>
+        </div>
+
+        <div class="manifesto-grid">
+          <div class="card">
+            <h3 class="card-title">Featured Prompt</h3>
+            <p class="card-text">One focused idea at a time.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Active Project</h3>
+            <p class="card-text">A shared direction for the studio.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Community Drops</h3>
+            <p class="card-text">Curated contributions only.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section closing" aria-label="Closing statement">
+      <div class="container closing-inner">
+        <p class="closing-line">Curated community beats open noise.</p>
+        <p class="closing-sub">We expand only when the structure is strong.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <p class="footer-mark">J GIL Brothers</p>
+        <p class="footer-note">A content creation studio built on discipline, not hype.</p>
       </div>
 
-      <div class="manifesto-grid">
-        <div class="card">
-          <h3 class="card-title">Featured Prompt</h3>
-          <p class="card-text">One focused idea at a time.</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">Active Project</h3>
-          <p class="card-text">A shared direction for the studio.</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">Community Drops</h3>
-          <p class="card-text">Curated contributions only.</p>
-        </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/tools.html">Free AI Tools</a>
+        <a href="/jgil-studios/">J GIL Studio</a>
+        <a href="/creative-hub.html">Creative Hub</a>
+      </nav>
+
+      <div class="footer-right">
+        <p class="footer-small">© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
       </div>
     </div>
-  </section>
-</main>
-
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <nav class="footer-nav">
-      <a href="/">Home</a>
-      <a href="/about.html">About</a>
-      <a href="/tools.html">Free AI Tools</a>
-      <a href="/jgil-studio/">J GIL Studio</a>
-      <a href="/creative-hub.html">Creative Hub</a>
-    </nav>
-    <p class="footer-small">© <span id="year"></span> J GIL Brothers</p>
-  </div>
-</footer>
+  </footer>
 </body>
 </html>

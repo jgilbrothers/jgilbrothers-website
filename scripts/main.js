@@ -1,30 +1,53 @@
-// J GIL Brothers – Global JS
+(() => {
+  const nav = document.getElementById("site-nav");
+  const toggle = document.querySelector(".nav-toggle");
+  const yearEl = document.getElementById("year");
 
-(function () {
-  const navToggle = document.querySelector('.nav-toggle');
-  const nav = document.getElementById('primary-nav');
-  const body = document.body;
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  if (navToggle && nav) {
-    navToggle.addEventListener('click', () => {
-      const isOpen = body.classList.toggle('nav-open');
-      navToggle.setAttribute('aria-expanded', String(isOpen));
+  if (nav && toggle) {
+    const setOpen = (open) => {
+      nav.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(!nav.classList.contains("is-open"));
     });
 
-    // Close nav when a link is clicked (on mobile)
-    nav.addEventListener('click', (event) => {
-      const target = event.target;
-      if (target instanceof HTMLElement && target.tagName.toLowerCase() === 'a' && body.classList.contains('nav-open')) {
-        body.classList.remove('nav-open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      }
+    nav.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t && t.matches && t.matches("a")) setOpen(false);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
     });
   }
 
-  // Set current year in footer if the element exists
-  const yearSpan = document.getElementById('year');
-  if (yearSpan) {
-    const now = new Date();
-    yearSpan.textContent = String(now.getFullYear());
-  }
+  // Active link
+  const links = document.querySelectorAll(".nav-link");
+  const path = window.location.pathname || "/";
+
+  const normalize = (p) => {
+    if (!p) return "/";
+    // treat /index.html as /
+    if (p === "/index.html") return "/";
+    return p;
+  };
+
+  const current = normalize(path);
+
+  links.forEach((a) => {
+    const href = normalize(a.getAttribute("href"));
+
+    // folder routes: match exact folder prefix
+    const isFolder = href.endsWith("/");
+
+    const match = isFolder
+      ? current === href || current.startsWith(href)
+      : current === href;
+
+    if (match) a.setAttribute("aria-current", "page");
+  });
 })();

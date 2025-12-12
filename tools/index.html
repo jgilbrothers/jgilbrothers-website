@@ -12,100 +12,133 @@
 </head>
 
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="/">
-      <span class="brand-mark"></span>
-      <span class="brand-text">
-        <span class="brand-name">J GIL Brothers</span>
-        <span class="brand-tag">Content Creation Studio</span>
-      </span>
-    </a>
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="J GIL Brothers Home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">J GIL Brothers</span>
+          <span class="brand-tag">Content Creation Studio</span>
+        </span>
+      </a>
 
-    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">
-      <span class="nav-toggle-lines"></span>
-      <span class="sr-only">Menu</span>
-    </button>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-lines" aria-hidden="true"></span>
+        <span class="sr-only">Menu</span>
+      </button>
 
-    <nav id="site-nav" class="site-nav">
-      <ul class="nav-list">
-        <li><a class="nav-link" href="/">Home</a></li>
-        <li><a class="nav-link" href="/about.html">About</a></li>
-        <li><a class="nav-link" href="/tools.html">Free AI Tools</a></li>
-        <li><a class="nav-link" href="/jgil-studio/">J GIL Studio</a></li>
-        <li><a class="nav-link" href="/creative-hub.html">Creative Hub</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="/">Home</a></li>
+          <li><a class="nav-link" href="/about.html">About</a></li>
+          <li><a class="nav-link" href="/tools.html">Free AI Tools</a></li>
+          <li><a class="nav-link" href="/jgil-studios/">J GIL Studio</a></li>
+          <li><a class="nav-link" href="/creative-hub.html">Creative Hub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<main id="main" class="site-main">
-  <section class="section hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="kicker">Free AI Tools</p>
-        <h1 class="hero-title">Studio Instruments.</h1>
-        <p class="hero-subtitle">
-          These tools exist to support a process. They evolve as the studio evolves.
-        </p>
+  <main id="main" class="site-main">
+    <section class="section hero" aria-label="Free AI Tools">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">Free AI Tools</p>
+          <h1 class="hero-title">Studio Instruments.</h1>
+          <p class="hero-subtitle">
+            These tools exist to support a process. They evolve as the studio evolves.
+          </p>
 
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#generator">Open Image Generator</a>
-          <a class="btn btn-ghost" href="/jgil-studio/">See Output</a>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#generator">Open Image Generator</a>
+            <a class="btn btn-ghost" href="/jgil-studios/">See Output</a>
+          </div>
+
+          <p class="hero-note">
+            Next: we wire generation so outputs match prompts consistently.
+          </p>
         </div>
-      </div>
 
-      <div class="hero-frame">
-        <div class="frame-inner">
-          <div class="frame-label">
-            <span class="pill pill-red">Tool Slot</span>
-            <span class="frame-text">Generator UI / preview goes here.</span>
+        <div class="hero-frame" aria-label="Tools banner slot (added later)">
+          <div class="frame-inner">
+            <div class="frame-label">
+              <span class="pill pill-red">Tool Slot</span>
+              <span class="frame-text">Generator preview/banner will live here.</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="generator" class="section manifesto">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-title">Image Generator</h2>
-        <p class="section-subtitle">
-          Prompt → Style → Output. Quality comes from constraints.
-        </p>
+    <section id="generator" class="section manifesto" aria-label="Image Generator">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Image Generator</h2>
+          <p class="section-subtitle">Prompt → Style → Output. Quality comes from constraints.</p>
+        </div>
+
+        <div class="manifesto-grid">
+          <div class="card">
+            <h3 class="card-title">Prompt</h3>
+            <p class="card-text">Text input will live here.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Style</h3>
+            <p class="card-text">Controlled studio styles (noir, cinematic, sketch, anime, classical).</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Output</h3>
+            <p class="card-text">Generated images appear here.</p>
+          </div>
+        </div>
+
+        <div class="tools-slab" style="margin-top:14px;">
+          <div class="tools-copy">
+            <h2 class="section-title" style="margin-bottom:8px;">Next Wiring Step</h2>
+            <p class="section-subtitle">
+              After layout is locked, we connect the generator pipeline and tighten prompt accuracy.
+            </p>
+            <div class="tools-actions">
+              <a class="btn btn-primary" href="/about.html">Read the Why</a>
+              <a class="btn btn-ghost" href="/creative-hub.html">Go to Creative Hub</a>
+            </div>
+          </div>
+
+          <div class="tools-frame" aria-label="Live output slot (added later)">
+            <div class="frame-inner">
+              <div class="frame-label">
+                <span class="pill">Output Slot</span>
+                <span class="frame-text">This becomes the live output preview once wired.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <p class="footer-mark">J GIL Brothers</p>
+        <p class="footer-note">A content creation studio built on discipline, not hype.</p>
       </div>
 
-      <div class="manifesto-grid">
-        <div class="card">
-          <h3 class="card-title">Prompt</h3>
-          <p class="card-text">Text input will live here.</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">Style</h3>
-          <p class="card-text">Controlled studio styles.</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">Output</h3>
-          <p class="card-text">Generated images appear here.</p>
-        </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/tools.html">Free AI Tools</a>
+        <a href="/jgil-studios/">J GIL Studio</a>
+        <a href="/creative-hub.html">Creative Hub</a>
+      </nav>
+
+      <div class="footer-right">
+        <p class="footer-small">© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
       </div>
     </div>
-  </section>
-</main>
-
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <nav class="footer-nav">
-      <a href="/">Home</a>
-      <a href="/about.html">About</a>
-      <a href="/tools.html">Free AI Tools</a>
-      <a href="/jgil-studio/">J GIL Studio</a>
-      <a href="/creative-hub.html">Creative Hub</a>
-    </nav>
-    <p class="footer-small">© <span id="year"></span> J GIL Brothers</p>
-  </div>
-</footer>
+  </footer>
 </body>
 </html>

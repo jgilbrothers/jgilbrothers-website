@@ -2,240 +2,215 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>J GIL Brothers | AI Branding & Content Studio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="J GIL Brothers is an AI-powered content and branding studio for creators. Build visuals, automate content, and grow your brand with free tools and creator-first support.">
+  <title>J GIL Brothers – Systems for Bold Creators</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="J GIL Brothers builds bold systems, tools, and studios for creators who want to move faster, think bigger, and ship more.">
   <link rel="stylesheet" href="/styles/styles.css">
+  <script src="/scripts/main.js" defer></script>
 </head>
 <body>
-  <!-- Site Header -->
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="site-logo">
-        <!-- MAIN LOGO -->
+    <div class="container site-header__inner">
+      <a href="/" class="brand">
         <img
-          src="/assets/images/jgil-brothers-logo-2025.png"
+          src="/assets/images/global/jgil-brothers-logo-2025.png"
           alt="J GIL Brothers logo"
-          class="logo-image"
+          class="brand__logo"
         >
+        <span class="brand__text">J GIL Brothers</span>
       </a>
 
-      <nav class="site-nav" aria-label="Main navigation">
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about/">About</a></li>
-          <li><a href="/blog/">Blog</a></li>
-          <li><a href="/tools/">Free AI Tools</a></li>
-          <li><a href="/creators-hub/">Creators Hub</a></li>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-nav">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+
+      <nav id="primary-nav" class="site-nav">
+        <ul class="site-nav__list">
+          <li class="site-nav__item"><a href="/" class="site-nav__link site-nav__link--active">Home</a></li>
+          <li class="site-nav__item"><a href="/about/" class="site-nav__link">About</a></li>
+          <li class="site-nav__item"><a href="/creators-hub/" class="site-nav__link">Creators Hub</a></li>
+          <li class="site-nav__item"><a href="/jgil-studios/" class="site-nav__link">JGIL Studios</a></li>
+          <li class="site-nav__item"><a href="/tools/" class="site-nav__link">Tools</a></li>
+          <li class="site-nav__item"><a href="/blog/" class="site-nav__link">Blog</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <p class="eyebrow">AI-powered content & brand studio</p>
-          <h1>You’ve got the vision. We’ve got the audacity to build it.</h1>
-          <p class="hero-subtitle">
-            J GIL Brothers is a creator-first studio for people who refuse to play small.
-            Use our AI tools, systems, and support to turn ideas into visual assets,
-            content engines, and a brand people remember.
+  <main class="page page--home">
+    <!-- Hero -->
+    <section class="section hero">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">Welcome to J GIL Brothers</p>
+          <h1 class="hero__title">Bold systems for creators who refuse to move slow.</h1>
+          <p class="hero__text">
+            This is the operations hub for J GIL Brothers — tools, studios, and automation
+            built so creators can launch faster, experiment harder, and keep full control.
           </p>
-
-          <div class="hero-ctas">
-            <!-- CTA 1: FREE AI TOOLS -->
-            <a class="btn primary" href="/tools/">
-              Explore Free AI Tools
-            </a>
-
-            <!-- CTA 2: CREATORS HUB -->
-            <a class="btn secondary" href="/creators-hub/">
-              Join the Creators Hub
-            </a>
+          <div class="hero__actions">
+            <a href="/tools/" class="btn btn--primary">Explore Free &amp; Paid Tools</a>
+            <a href="/jgil-studios/" class="btn btn--ghost">Visit JGIL Studios</a>
           </div>
-
-          <p class="hero-note">
-            *Both paths start with a quick email sign-up so we can unlock your tools
-            and keep your sessions synced.
+          <p class="hero__subtext">
+            Backed by automation, powered by Cloudflare, GitHub, and a custom AI workflow.
           </p>
         </div>
 
-        <!-- HERO ART / VISUAL ANCHOR -->
-        <div class="hero-art">
-          <div class="hero-art-card">
-            <p class="hero-art-label">Neo-Durham Energy</p>
-            <p class="hero-art-text">
-              Built for bold, community-driven creators who want their brand to actually live
-              in people’s heads — not just on a mood board.
-            </p>
+        <div class="hero__visual">
+          <div class="image-slot image-slot--hero">
+            <div class="image-slot__inner">
+              <p class="image-slot__label">Future home hero visual</p>
+              <p class="image-slot__hint">Connect /assets/images/home/ later</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PATHWAYS -->
-    <section class="section pathways">
+    <!-- Systems overview -->
+    <section class="section section--muted">
       <div class="container">
-        <h2>Pick your starting point</h2>
-        <p class="section-intro">
-          Two main ways to build with J GIL Brothers. Start free, stay scrappy, and
-          level up into done-with-you or done-for-you studio support when you’re ready.
-        </p>
+        <div class="section__header">
+          <h2 class="section__title">What lives inside J GIL Brothers</h2>
+          <p class="section__subtitle">
+            The site is split into focused hubs so you always know where to go and what each tab actually does.
+          </p>
+        </div>
 
-        <div class="cards-grid">
+        <div class="card-grid card-grid--three">
           <article class="card">
-            <h3>Free AI Tools</h3>
-            <p>
-              Templates, prompts, and automation starters to help you design visuals,
-              plan content, and move faster without hiring a full team.
+            <h3 class="card__title">Tools</h3>
+            <p class="card__text">
+              Free and paid AI tools, editors, and utilities. Built to be fast, simple, and actually useful.
             </p>
-            <a href="/tools/" class="link-arrow">
-              Open the tools library →
-            </a>
+            <a href="/tools/" class="card__link">Open the tools hub</a>
           </article>
 
           <article class="card">
-            <h3>Creators Hub</h3>
-            <p>
-              A home base for builders: playbooks, experiments, and behind-the-scenes
-              notes as we build this studio in public with you.
+            <h3 class="card__title">JGIL Studios</h3>
+            <p class="card__text">
+              A studio space for visual work, video experiments, Sora concepts, and brand storytelling.
             </p>
-            <a href="/creators-hub/" class="link-arrow">
-              Step into the Hub →
-            </a>
+            <a href="/jgil-studios/" class="card__link">Enter JGIL Studios</a>
           </article>
 
           <article class="card">
-            <h3>Studio / Services</h3>
-            <p>
-              When it’s time to look and move like a real brand, we help with visual
-              identity, content systems, and AI-powered workflows.
+            <h3 class="card__title">Creators Hub</h3>
+            <p class="card__text">
+              A hub for creators, builders, and collaborators. Templates, systems, and experiments.
             </p>
-            <a href="/studio/" class="link-arrow">
-              Explore studio offerings →
-            </a>
+            <a href="/creators-hub/" class="card__link">Visit Creators Hub</a>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ABOUT -->
-    <section class="section about">
+    <!-- Visual / Portfolio preview -->
+    <section class="section">
+      <div class="container section__split">
+        <div class="section__split-text">
+          <h2 class="section__title">Visual work &amp; experiments</h2>
+          <p class="section__subtitle">
+            J GIL Brothers is building a visual catalog — motion, image-to-video, Sora tests, and brand pieces.
+            The site layout is ready now; images and projects will plug in as the catalog grows.
+          </p>
+          <ul class="list">
+            <li class="list__item">Slots prepared for studios visuals under <code>/assets/images/studios/</code></li>
+            <li class="list__item">Portfolio-ready layout using <code>/assets/images/portfolio/</code></li>
+            <li class="List__item">All powered by the same global design system.</li>
+          </ul>
+          <a href="/jgil-studios/" class="btn btn--secondary">Preview the studio space</a>
+        </div>
+
+        <div class="section__split-visual">
+          <div class="image-slot image-slot--portfolio">
+            <div class="image-slot__inner">
+              <p class="image-slot__label">Future portfolio collage</p>
+              <p class="image-slot__hint">Connect /assets/images/portfolio/ later</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog / updates -->
+    <section class="section section--muted">
       <div class="container">
-        <h2>About J GIL Brothers</h2>
-        <p>
-          J GIL Brothers is a creator-first AI branding and content studio
-          built in Neo-Durham spirit: bold, honest, and community-driven.
-          We combine human storytelling, design instincts, and smart automation
-          so your brand doesn’t just look good — it works.
-        </p>
-        <p>
-          Whether you’re just starting, rebuilding, or leveling up, our tools,
-          templates, and support are designed to meet you where you are
-          and grow with you. The goal is simple: fewer stuck ideas, more
-          shipped assets.
-        </p>
-      </div>
-    </section>
+        <div class="section__header">
+          <h2 class="section__title">Updates &amp; breakdowns</h2>
+          <p class="section__subtitle">
+            The blog will act as a logbook — breaking down systems, experiments, and tools so others can learn and copy.
+          </p>
+        </div>
 
-    <!-- TESTIMONIALS / VOICES OF THE COMMUNITY -->
-    <section class="section testimonials">
-      <div class="container">
-        <h2>Voices of the community</h2>
-        <p class="section-intro">
-          Real creators. Real results. Here’s what people are saying about
-          building with J GIL Brothers.
-        </p>
-
-        <div class="testimonial-grid">
-          <article class="testimonial-card">
-            <p class="testimonial-quote">
-              “J GIL Brothers helped me turn scattered ideas into a real brand.
-              The automation and visuals saved me weeks of work.”
+        <div class="card card--wide">
+          <div class="card__body">
+            <p class="card__eyebrow">Coming soon</p>
+            <h3 class="card__title">J GIL logbook &amp; build notes</h3>
+            <p class="card__text">
+              The automation is already in place. Next, the blog system will connect to Workers so posts can be
+              shipped straight from structured prompts and tools — no manual copy/paste needed.
             </p>
-            <p class="testimonial-name">— Creator Name #1</p>
-          </article>
-
-          <article class="testimonial-card">
-            <p class="testimonial-quote">
-              “I finally feel like my content looks as serious as my vision.
-              The tools are simple, but the output feels premium.”
-            </p>
-            <p class="testimonial-name">— Creator Name #2</p>
-          </article>
-
-          <article class="testimonial-card">
-            <p class="testimonial-quote">
-              “The mix of free tools and real guidance is different.
-              It feels like a small studio that actually cares if I win.”
-            </p>
-            <p class="testimonial-name">— Creator Name #3</p>
-          </article>
+            <a href="/blog/" class="card__link">Go to the blog index</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- BRAND YOURSELF / BLOG TEASER -->
-    <section class="section brand-yourself">
-      <div class="container brand-yourself-inner">
-        <div class="brand-yourself-text">
-          <h2>Brand Yourself</h2>
-          <p>
-            Our “Brand Yourself” series breaks down how to use AI tools,
-            storytelling, and simple systems to build a brand that looks
-            good and actually converts.
-          </p>
-          <a href="/blog/" class="link-arrow">
-            Read the latest posts →
-          </a>
-        </div>
-
-        <div class="brand-yourself-image">
-          <img
-            src="/assets/images/brand-yourself-cover.jpg"
-            alt="Brand Yourself blog cover (placeholder)"
-          >
-        </div>
-      </div>
-    </section>
-
-    <!-- FOUNDERS CONCEPT ART -->
-    <section class="section founders-art">
-      <div class="container founders-inner">
-        <div class="founders-text">
-          <h2>J GIL Brothers founders concept art</h2>
-          <p>
-            The J GIL Brothers silhouettes represent legacy, audacity, and
-            the promise that your ideas won’t die in your Notes app.
-            This is the visual anchor for everything we build.
-          </p>
-          <p>
-            As the studio grows, this icon becomes the north star:
-            a reminder that bold ideas from small corners can still shift cultures.
+    <!-- Support / CTA -->
+    <section class="section section--cta">
+      <div class="container section--cta__inner">
+        <div class="section--cta__text">
+          <h2 class="section__title">Support the vision &amp; the experiments</h2>
+          <p class="section__subtitle">
+            As the tools, studios, and automation expand, this site becomes the control panel.
+            Later, a dedicated support / donate flow will plug in here using Stripe + Workers.
           </p>
         </div>
-        <div class="founders-image">
-          <img
-            src="/assets/images/founders-concept-art.jpg"
-            alt="J GIL Brothers founders concept art (placeholder)"
-          >
+        <div class="section--cta__actions">
+          <a href="/tools/" class="btn btn--primary">Start with the tools</a>
+          <a href="/about/" class="btn btn--ghost">Learn more about J GIL Brothers</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
-      <p class="footer-note">
-        Built with audacity for creators who refuse to play small.
-      </p>
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <p class="site-footer__title">J GIL Brothers</p>
+        <p class="site-footer__text">
+          Built on Cloudflare Pages, GitHub, and a custom AI automation stack. Designed to ship fast and stay flexible.
+        </p>
+      </div>
+      <div class="site-footer__links">
+        <div class="site-footer__col">
+          <h3 class="site-footer__heading">Navigate</h3>
+          <ul class="site-footer__list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/creators-hub/">Creators Hub</a></li>
+            <li><a href="/jgil-studios/">JGIL Studios</a></li>
+            <li><a href="/tools/">Tools</a></li>
+            <li><a href="/blog/">Blog</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__col">
+          <h3 class="site-footer__heading">Status</h3>
+          <p class="site-footer__text">
+            Automation panel online. GitHub + Cloudflare deployment active. More tools and visuals are loading in.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <div class="container site-footer__bottom-inner">
+        <p class="site-footer__copy">&copy; <span id="year"></span> J GIL Brothers. All rights reserved.</p>
+      </div>
     </div>
   </footer>
-
-  <script src="/scripts/main.js" defer></script>
 </body>
 </html>

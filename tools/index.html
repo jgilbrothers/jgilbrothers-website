@@ -2,52 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tools | J GIL Brothers</title>
-  <meta name="description" content="Free AI tools by J GIL Brothers." />
-  <link rel="stylesheet" href="/styles/styles.css">
-  <script src="/scripts/main.js" defer></script>
-</head>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Free AI Tools | J GIL Brothers</title>
 
+  <!-- IMPORTANT: Use your existing global stylesheet path -->
+  <link rel="stylesheet" href="/styles/styles.css" />
+</head>
 <body>
+
+  <!-- Universal header (absolute links ONLY) -->
   <header class="site-header">
-    <div class="container">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">J GIL Brothers</a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/">Home</a>
-        <a href="/creators-hub/">Creators Hub</a>
-        <a href="/jgil-studios/">J GIL Studios</a>
-        <a href="/tools/">Tools</a>
-        <a href="/about/">About</a>
+    <div class="site-header__inner">
+      <a class="brand" href="/">
+        <span class="brand__name">J GIL Brothers</span>
+        <span class="brand__tag">Content Creation Studio</span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav__link" href="/">Home</a>
+        <a class="nav__link" href="/about/">About</a>
+        <a class="nav__link nav__link--active" href="/tools/">Free AI Tools</a>
+        <a class="nav__link" href="/jgil-studios/">J GIL Studios</a>
+        <a class="nav__link" href="/creators-hub/">Creators Hub</a>
       </nav>
     </div>
   </header>
 
-  <main class="site-main">
-    <section class="container">
-      <h1>Tools</h1>
-      <p>Free tools built by J GIL Brothers.</p>
-
-      <div class="card">
-        <h2>Free AI Tools</h2>
-        <ul>
-          <li><a href="/tools/image-generator/">Image Generator</a></li>
-        </ul>
-      </div>
+  <main class="page">
+    <section class="hero">
+      <h1>Free AI Tools</h1>
+      <p class="muted">Free tools built by J GIL Brothers.</p>
     </section>
+
+    <section class="card">
+      <h2>Tools</h2>
+      <ul class="list">
+        <li><a href="/tools/image-generator/">Image Generator</a></li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      © 2025 J GIL Brothers. Built on Cloudflare.
+    </footer>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</p>
-    </div>
-  </footer>
-
-  <script>
-    (function () {
-      var y = document.getElementById("year");
-      if (y) y.textContent = String(new Date().getFullYear());
-    })();
-  </script>
 </body>
 </html>

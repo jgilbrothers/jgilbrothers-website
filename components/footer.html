@@ -1,0 +1,20 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+    <small>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</small>
+
+    <div class="footer-disclaimer">
+      <strong>Disclaimer:</strong>
+      J GIL Brothers is a community-based creative studio. Some pages may link to or reference third-party tools and services.
+      We are not responsible for third-party platforms, outages, changes, pricing, or policies.
+      Our services and deliverables are based on the pricing, scope, and creative choices agreed at purchase or in writing.
+      Digital sales are generally final; remakes or revisions may be offered at our discretion depending on the project and agreement.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+</footer>

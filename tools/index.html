@@ -5,67 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Free AI Tools | J GIL Brothers</title>
   <meta name="description" content="Free AI tools built by J GIL Brothers." />
-  <link rel="icon" href="/assets/images/global/jgil-brothers-logo-2025.png" />
   <link rel="stylesheet" href="/styles/styles.css" />
   <script src="/scripts/main.js" defer></script>
 </head>
 
 <body>
-  <!-- Global Header (matches site-wide order + routes) -->
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">
-        <img
-          class="brand-mark"
-          src="/assets/images/global/jgil-brothers-logo-2025.png"
-          alt="J GIL Brothers"
-          loading="eager"
-        />
-        <div class="brand-text">
-          <div class="brand-name">J GIL Brothers</div>
-          <div class="brand-tagline">Content Creation Studio</div>
-        </div>
+  <!-- Header matches Home: text brand + same nav order -->
+  <header>
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <div class="site-top">
+      <a class="site-brand" href="/" aria-label="Home">
+        <div class="site-brand__title">J GIL Brothers</div>
+        <div class="site-brand__subtitle">Content Creation Studio</div>
       </a>
 
       <nav class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/about/">About</a>
-        <a class="nav-link" href="/tools/">Free AI Tools</a>
-        <a class="nav-link" href="/jgil-studios/">J GIL Studios</a>
-        <a class="nav-link" href="/creators-hub/">Creators Hub</a>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/tools/">Free AI Tools</a>
+        <a href="/jgil-studios/">J GIL Studios</a>
+        <a href="/creators-hub/">Creators Hub</a>
       </nav>
     </div>
   </header>
 
-  <main class="site-main" id="main" role="main">
-    <section class="section">
-      <div class="container">
-        <header class="section-head">
-          <h1 class="h1">Free AI Tools</h1>
-          <p class="subhead">Free tools built by J GIL Brothers.</p>
-        </header>
+  <main id="main">
+    <section>
+      <h1>Free AI Tools</h1>
+      <p>Free tools built by J GIL Brothers.</p>
 
-        <div class="grid cards">
-          <article class="card">
-            <h2 class="h3">Image Generator</h2>
-            <p class="muted">
-              Generate an image from a prompt. Limits are enforced per email.
-            </p>
-            <a class="button" href="/tools/image-generator/">Open Image Generator</a>
-          </article>
-        </div>
-      </div>
+      <h2>Tools</h2>
+      <ul>
+        <li><a href="/tools/image-generator/">Image Generator</a></li>
+      </ul>
     </section>
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container footer-inner">
-      <div class="muted">© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</div>
-    </div>
+  <footer>
+    <small>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</small>
   </footer>
 
   <script>
-    // footer year (safe, no dependencies)
     (function () {
       var y = document.getElementById("year");
       if (y) y.textContent = String(new Date().getFullYear());

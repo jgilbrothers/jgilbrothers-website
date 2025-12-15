@@ -1,173 +1,163 @@
-(() => {
-  const $ = (id) => document.getElementById(id);
+/* Image Generator (frontend)
+   - Strong status + error handling
+   - Works with /tools/image-generator/index.html IDs
+   - Expects a same-origin API endpoint: /api/image-generate
+*/
 
-  const emailEl = $("email");
-  const promptEl = $("prompt");
-  const aspectEl = $("aspect");
-  const btnEl = $("generateBtn");
-  const resultEl = $("result");
-  const remainingEl = $("remainingText");
+(function () {
+  const form = document.getElementById("imageGenForm");
+  const emailEl = document.getElementById("email");
+  const promptEl = document.getElementById("prompt");
+  const aspectEl = document.getElementById("aspect");
+  const btn = document.getElementById("generateBtn");
+  const statusEl = document.getElementById("status");
+  const resultsEl = document.getElementById("results");
 
-  // Build API paths relative to wherever this page is mounted.
-  // Works for /tools/image-generator/ routed to your Worker.
-  function basePath() {
-    // Example: /tools/image-generator/ or /tools/image-generator/index.html
-    const p = window.location.pathname;
-    const idx = p.indexOf("/tools/image-generator");
-    if (idx === -1) return "/tools/image-generator/";
-    const base = p.slice(0, idx) + "/tools/image-generator/";
-    return base;
+  if (!form || !emailEl || !promptEl || !aspectEl || !btn || !statusEl || !resultsEl) {
+    return; // page not loaded / IDs missing
   }
 
-  const API_GENERATE = basePath() + "api/generate";
-  const API_HEALTH = basePath() + "health";
+  const API_ENDPOINT = "/api/image-generate";
+  const TIMEOUT_MS = 45000;
 
-  function setLoading(isLoading) {
-    btnEl.disabled = isLoading;
-    btnEl.textContent = isLoading ? "Generating..." : "Generate Image";
+  function setStatus(msg) {
+    statusEl.textContent = msg || "";
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (m) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    }[m]));
+  function disable(state) {
+    btn.disabled = state;
+    btn.textContent = state ? "Generating..." : "Generate Image";
   }
 
-  function showStatus(html) {
-    resultEl.innerHTML = html;
+  function safeJsonParse(text) {
+    try { return JSON.parse(text); } catch { return null; }
   }
 
-  async function checkHealth() {
+  function addImage(src, alt) {
+    const img = document.createElement("img");
+    img.className = "result-img";
+    img.src = src;
+    img.alt = alt || "Generated image";
+    resultsEl.prepend(img);
+  }
+
+  async function fetchWithTimeout(url, options, timeoutMs) {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const r = await fetch(API_HEALTH, { method: "GET" });
-      if (!r.ok) return;
-      const j = await r.json();
-      // If your Worker returns limits in /health, show them.
-      if (typeof j.monthlyCapEmail === "number") {
-        remainingEl.textContent = `Monthly cap: ${j.monthlyCapEmail}`;
-      }
-    } catch (_) {
-      // silent
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      return res;
+    } finally {
+      clearTimeout(t);
     }
   }
 
-  async function generate() {
-    const email = (emailEl.value || "").trim().toLowerCase();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = (emailEl.value || "").trim();
     const prompt = (promptEl.value || "").trim();
     const aspect = (aspectEl.value || "1:1").trim();
 
-    if (!email) {
-      showStatus(`<div class="status-bad">Email is required.</div>`);
-      emailEl.focus();
-      return;
-    }
-    if (!prompt) {
-      showStatus(`<div class="status-bad">Prompt is required.</div>`);
-      promptEl.focus();
+    if (!email || !prompt) {
+      setStatus("Email + Prompt are required.");
       return;
     }
 
-    setLoading(true);
-    showStatus(`<div class="meta">Generating… (usually ~5–20s)</div>`);
+    // quick heads-up for weapon prompts (common safety block)
+    if (/gun|rifle|machine gun|pistol|shotgun/i.test(prompt)) {
+      setStatus(
+        "Heads up: prompts mentioning weapons often get blocked. If it fails, try removing weapon wording.\nGenerating..."
+      );
+    } else {
+      setStatus("Generating...");
+    }
+
+    disable(true);
 
     try {
-      const res = await fetch(API_GENERATE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          prompt,
-          aspect_ratio: aspect
-        }),
-      });
+      const res = await fetchWithTimeout(
+        API_ENDPOINT,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, prompt, aspect })
+        },
+        TIMEOUT_MS
+      );
 
-      const contentType = res.headers.get("content-type") || "";
-      let data;
+      const contentType = (res.headers.get("content-type") || "").toLowerCase();
 
-      if (contentType.includes("application/json")) {
-        data = await res.json();
-      } else {
-        const txt = await res.text();
-        data = { error: txt || "Unexpected response" };
-      }
-
-      if (!res.ok || data?.error) {
-        const msg = data?.error || data?.message || `Request failed (${res.status})`;
-        const remaining = typeof data?.remaining === "number" ? data.remaining : null;
-
-        showStatus(`
-          <div class="status-bad">Error: ${escapeHtml(msg)}</div>
-          ${remaining !== null ? `<div class="meta">Remaining this month: ${remaining}</div>` : ``}
-        `);
+      // If API returns an image directly
+      if (contentType.startsWith("image/")) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        addImage(url, prompt);
+        setStatus("Done.");
         return;
       }
 
-      // Expected success payload:
-      // { imageUrl: "data:image/png;base64,..."} OR { imageBase64: "..."} OR { image: "data:..." }
-      // plus optional { remaining: number }
-      const remaining = typeof data?.remaining === "number" ? data.remaining : null;
+      const text = await res.text();
+      const data = safeJsonParse(text);
 
-      let src =
-        data?.imageUrl ||
-        data?.image ||
-        (data?.imageBase64 ? `data:image/png;base64,${data.imageBase64}` : null);
+      if (!res.ok) {
+        // show server error details
+        const errMsg =
+          (data && (data.error || data.message)) ||
+          text ||
+          `Request failed (${res.status})`;
+        throw new Error(errMsg);
+      }
 
-      if (!src) {
-        showStatus(`<div class="status-bad">Generated, but no image was returned.</div>`);
+      // Supported response shapes:
+      // { imageUrl: "https://..." }
+      // { url: "https://..." }
+      // { image: "base64..." } or { b64: "..." }
+      // { dataUrl: "data:image/png;base64,..." }
+      const imageUrl =
+        (data && (data.imageUrl || data.url)) ||
+        null;
+
+      const dataUrl =
+        (data && data.dataUrl) ||
+        null;
+
+      const base64 =
+        (data && (data.image || data.b64)) ||
+        null;
+
+      if (dataUrl && typeof dataUrl === "string" && dataUrl.startsWith("data:image/")) {
+        addImage(dataUrl, prompt);
+        setStatus("Done.");
         return;
       }
 
-      const safePrompt = escapeHtml(prompt).slice(0, 260);
-
-      showStatus(`
-        <div class="status-good">Success.</div>
-        ${remaining !== null ? `<div class="meta">Remaining this month: ${remaining}</div>` : ``}
-        <div class="img-wrap">
-          <img src="${src}" alt="Generated image: ${safePrompt}" />
-        </div>
-        <div class="actions">
-          <a class="btn" href="${src}" download="jgil-image.png">Download</a>
-          <button class="btn" type="button" id="copyPromptBtn">Copy prompt</button>
-        </div>
-        <div class="meta" style="margin-top:10px;">Prompt: ${safePrompt}</div>
-      `);
-
-      const copyBtn = document.getElementById("copyPromptBtn");
-      if (copyBtn) {
-        copyBtn.addEventListener("click", async () => {
-          try {
-            await navigator.clipboard.writeText(prompt);
-            copyBtn.textContent = "Copied!";
-            setTimeout(() => (copyBtn.textContent = "Copy prompt"), 1000);
-          } catch {
-            copyBtn.textContent = "Copy failed";
-            setTimeout(() => (copyBtn.textContent = "Copy prompt"), 1200);
-          }
-        });
+      if (imageUrl && typeof imageUrl === "string") {
+        addImage(imageUrl, prompt);
+        setStatus("Done.");
+        return;
       }
 
-      if (remaining !== null) {
-        remainingEl.textContent = `Remaining this month: ${remaining}`;
+      if (base64 && typeof base64 === "string") {
+        // assume png if not specified
+        const src = base64.startsWith("data:image/")
+          ? base64
+          : `data:image/png;base64,${base64}`;
+        addImage(src, prompt);
+        setStatus("Done.");
+        return;
       }
+
+      // If we get here, API returned OK but no recognizable payload
+      setStatus("Generated, but response format was unexpected. Check Worker response JSON.");
     } catch (err) {
-      showStatus(`<div class="status-bad">Network error: ${escapeHtml(err?.message || String(err))}</div>`);
+      const msg =
+        err && err.name === "AbortError"
+          ? "Timed out. If your prompt is heavy or blocked, it may not complete. Try a simpler prompt."
+          : (err && err.message) ? err.message : "Unknown error.";
+      setStatus(`Error: ${msg}`);
     } finally {
-      setLoading(false);
+      disable(false);
     }
-  }
-
-  // Button
-  btnEl.addEventListener("click", generate);
-
-  // Ctrl+Enter submits (nice UX)
-  promptEl.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") generate();
   });
-
-  // Initial
-  checkHealth();
 })();

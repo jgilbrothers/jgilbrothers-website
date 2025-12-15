@@ -4,191 +4,123 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Image Generator | J GIL Brothers</title>
-
+  <meta name="description" content="Generate an image from a prompt. Limits are enforced per email." />
+  <link rel="icon" href="/assets/images/global/jgil-brothers-logo-2025.png" />
   <link rel="stylesheet" href="/styles/styles.css" />
-
-  <style>
-    /* Minimal “fix the quirks” layer without changing your global theme */
-    textarea { resize: none; } /* stops the expanding textarea handle */
-    .ig-wrap { max-width: 980px; margin: 0 auto; }
-    .ig-card { padding: 18px; border-radius: 14px; }
-    .ig-row { display: grid; gap: 12px; grid-template-columns: 1fr; }
-    @media (min-width: 900px) { .ig-row { grid-template-columns: 320px 1fr; } }
-    .ig-label { font-weight: 600; margin-bottom: 6px; display:block; }
-    .ig-input, .ig-select, .ig-textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-    }
-    .ig-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top: 10px; }
-    .ig-muted { opacity: 0.85; font-size: 0.95rem; }
-    .ig-result img { max-width: 100%; border-radius: 14px; display:block; }
-  </style>
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/image-generator.js" defer></script>
 </head>
-<body>
 
-  <!-- Universal header (absolute links ONLY) -->
-  <header class="site-header">
-    <div class="site-header__inner">
-      <a class="brand" href="/">
-        <span class="brand__name">J GIL Brothers</span>
-        <span class="brand__tag">Content Creation Studio</span>
+<body>
+  <!-- Global Header (matches Home nav order + routes) -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="J GIL Brothers Home">
+        <img
+          class="brand-mark"
+          src="/assets/images/global/jgil-brothers-logo-2025.png"
+          alt="J GIL Brothers"
+          loading="eager"
+        />
+        <div class="brand-text">
+          <div class="brand-name">J GIL Brothers</div>
+          <div class="brand-tagline">Content Creation Studio</div>
+        </div>
       </a>
 
-      <nav class="nav">
-        <a class="nav__link" href="/">Home</a>
-        <a class="nav__link" href="/about/">About</a>
-        <a class="nav__link nav__link--active" href="/tools/">Free AI Tools</a>
-        <a class="nav__link" href="/jgil-studios/">J GIL Studios</a>
-        <a class="nav__link" href="/creators-hub/">Creators Hub</a>
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/about/">About</a>
+        <a class="nav-link" href="/tools/">Free AI Tools</a>
+        <a class="nav-link" href="/jgil-studios/">J GIL Studios</a>
+        <a class="nav-link" href="/creators-hub/">Creators Hub</a>
       </nav>
     </div>
   </header>
 
-  <main class="page ig-wrap">
-    <section class="hero">
-      <h1>Image Generator</h1>
-      <p class="muted">Generate an image from a prompt. Limits are enforced per email.</p>
-    </section>
+  <main class="site-main" id="main" role="main">
+    <section class="section">
+      <div class="container">
+        <header class="section-head">
+          <h1 class="h1">Image Generator</h1>
+          <p class="subhead">Generate an image from a prompt. Limits are enforced per email.</p>
+        </header>
 
-    <section class="card ig-card">
-      <div class="ig-row">
-        <div>
-          <label class="ig-label" for="email">Email (required)</label>
-          <input class="ig-input" id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+        <!-- Tool Panel -->
+        <section class="panel">
+          <form class="form-grid" id="imageGenForm" autocomplete="off">
+            <div class="field">
+              <label for="email" class="label">Email (required)</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                class="input"
+                placeholder="you@example.com"
+                required
+              />
+              <p class="hint">We use this to apply monthly limits. No password yet.</p>
+            </div>
 
-          <p class="ig-muted" style="margin-top:10px;">
-            We use this to apply monthly limits. No password yet.
-          </p>
-        </div>
+            <div class="field field-wide">
+              <label for="prompt" class="label">Prompt</label>
+              <textarea
+                id="prompt"
+                name="prompt"
+                class="textarea"
+                rows="5"
+                placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed."
+                required
+              ></textarea>
+              <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
+            </div>
 
-        <div>
-          <label class="ig-label" for="prompt">Prompt</label>
-          <textarea class="ig-textarea" id="prompt" rows="7"
-            placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed."></textarea>
-
-          <p class="ig-muted" style="margin-top:10px;">
-            Tip: be specific about subject, lighting, style, and camera framing.
-          </p>
-
-          <div class="ig-actions">
-            <div style="min-width:260px; flex: 1;">
-              <label class="ig-label" for="aspect">Aspect ratio</label>
-              <select class="ig-select" id="aspect">
-                <option value="1:1">1:1 (Square)</option>
-                <option value="3:4">3:4 (Portrait)</option>
-                <option value="4:3">4:3 (Landscape)</option>
-                <option value="9:16">9:16 (Story)</option>
-                <option value="16:9">16:9 (Wide)</option>
+            <div class="field">
+              <label for="aspect" class="label">Aspect ratio</label>
+              <select id="aspect" name="aspect" class="select">
+                <option value="1:1" selected>1:1 (Square)</option>
+                <option value="16:9">16:9 (Landscape)</option>
+                <option value="9:16">9:16 (Portrait)</option>
+                <option value="4:5">4:5</option>
+                <option value="3:2">3:2</option>
               </select>
             </div>
 
-            <button class="btn" id="go">Generate Image</button>
-            <span class="ig-muted" id="remaining"></span>
+            <div class="field">
+              <label class="label sr-only" for="generateBtn">Generate</label>
+              <button id="generateBtn" type="submit" class="button button-primary">
+                Generate Image
+              </button>
+            </div>
+
+            <div class="field field-wide">
+              <div id="status" class="status" aria-live="polite"></div>
+            </div>
+          </form>
+        </section>
+
+        <!-- Results -->
+        <section class="section">
+          <div class="container">
+            <h2 class="h2">Results</h2>
+            <div id="results" class="results-grid"></div>
           </div>
-        </div>
+        </section>
       </div>
     </section>
-
-    <section class="card ig-card" style="margin-top:16px;">
-      <h2>Result</h2>
-      <div id="status" class="ig-muted"></div>
-      <div id="result" class="ig-result" style="margin-top:12px;"></div>
-
-      <p class="ig-muted" style="margin-top:14px;">
-        If you hit a limit, you’ll see a clear message. Try again next minute (burst limit) or next month (monthly limit).
-      </p>
-    </section>
-
-    <footer class="footer">
-      © 2025 J GIL Brothers. Built on Cloudflare.
-    </footer>
   </main>
 
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="muted">© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</div>
+    </div>
+  </footer>
+
   <script>
-    // IMPORTANT: This assumes your Worker route is:
-    // /tools/image-generator/*  (which you already set)
-    // and the Worker supports:
-    // GET  /tools/image-generator/health
-    // POST /tools/image-generator/generate
-    // GET  /tools/image-generator/remaining?email=...
-
-    const $ = (id) => document.getElementById(id);
-    const emailEl = $("email");
-    const promptEl = $("prompt");
-    const aspectEl = $("aspect");
-    const statusEl = $("status");
-    const resultEl = $("result");
-    const remainingEl = $("remaining");
-    const goBtn = $("go");
-
-    async function refreshRemaining() {
-      const email = (emailEl.value || "").trim();
-      if (!email) { remainingEl.textContent = ""; return; }
-
-      try {
-        const r = await fetch(`/tools/image-generator/remaining?email=${encodeURIComponent(email)}`);
-        const j = await r.json();
-        if (r.ok && typeof j.remaining !== "undefined") {
-          remainingEl.textContent = `Remaining this month: ${j.remaining}`;
-        } else {
-          remainingEl.textContent = "";
-        }
-      } catch {
-        remainingEl.textContent = "";
-      }
-    }
-
-    emailEl.addEventListener("blur", refreshRemaining);
-
-    goBtn.addEventListener("click", async () => {
-      const email = (emailEl.value || "").trim();
-      const prompt = (promptEl.value || "").trim();
-      const aspect = aspectEl.value;
-
-      resultEl.innerHTML = "";
-      statusEl.textContent = "";
-
-      if (!email) { statusEl.textContent = "Email is required."; return; }
-      if (!prompt) { statusEl.textContent = "Prompt is required."; return; }
-
-      goBtn.disabled = true;
-      statusEl.textContent = "Generating…";
-
-      try {
-        const r = await fetch("/tools/image-generator/generate", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ email, prompt, aspect })
-        });
-
-        const j = await r.json();
-
-        if (!r.ok) {
-          statusEl.textContent = j.error || "Generation failed.";
-          await refreshRemaining();
-          return;
-        }
-
-        statusEl.textContent = "Done.";
-        if (j.imageUrl) {
-          const img = document.createElement("img");
-          img.src = j.imageUrl;
-          img.alt = "Generated image";
-          resultEl.appendChild(img);
-        }
-
-        await refreshRemaining();
-      } catch (e) {
-        statusEl.textContent = "Network error. Try again.";
-      } finally {
-        goBtn.disabled = false;
-      }
-    });
-
-    // initial attempt if email is prefilled
-    refreshRemaining();
+    (function () {
+      var y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+    })();
   </script>
-
 </body>
 </html>

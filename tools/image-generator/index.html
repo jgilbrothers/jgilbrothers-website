@@ -1,1 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Generator | J GIL Brothers</title>
+  <meta name="description" content="Generate images with J GIL Brothers free AI tools." />
+  <link rel="stylesheet" href="/styles/styles.css">
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/image-generator.js" defer></script>
+</head>
 
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/" aria-label="J GIL Brothers Home">J GIL Brothers</a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/creators-hub/">Creators Hub</a>
+        <a href="/jgil-studios/">J GIL Studios</a>
+        <a href="/tools/">Tools</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <section class="container">
+      <h1>Image Generator</h1>
+      <p>
+        Generate an image from a prompt. Limits are enforced per email.
+      </p>
+
+      <div class="card">
+        <form id="imgGenForm" class="form">
+          <div class="form-row">
+            <label for="email">Email (required)</label>
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            <small class="muted">We use this to apply monthly limits. No password yet.</small>
+          </div>
+
+          <div class="form-row">
+            <label for="prompt">Prompt</label>
+            <textarea id="prompt" name="prompt" rows="5" required
+              placeholder="Example: A cinematic portrait of a lion wearing sunglasses, studio lighting, ultra-detailed, sharp focus"></textarea>
+            <small class="muted">Tip: be specific about subject, lighting, style, and camera framing.</small>
+          </div>
+
+          <div class="form-row">
+            <label for="aspectRatio">Aspect ratio</label>
+            <select id="aspectRatio" name="aspectRatio">
+              <option value="1:1" selected>1:1 (Square)</option>
+              <option value="16:9">16:9 (Landscape)</option>
+              <option value="9:16">9:16 (Portrait)</option>
+              <option value="4:3">4:3</option>
+              <option value="3:4">3:4</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <button id="generateBtn" class="btn" type="submit">Generate Image</button>
+            <span id="status" class="status" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <small id="quota" class="muted"></small>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Result</h2>
+
+        <div id="resultWrap" class="result-wrap" hidden>
+          <img id="resultImg" alt="Generated image result" />
+          <div class="result-actions">
+            <a id="downloadLink" class="btn secondary" href="#" download="jgil-image.png">Download</a>
+          </div>
+        </div>
+
+        <pre id="errorBox" class="error-box" hidden></pre>
+      </div>
+
+      <p class="muted">
+        If you hit a limit, you’ll see a clear message. Try again next minute (burst limit) or next month (monthly limit).
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tiny footer year helper (safe, static-only)
+    (function () {
+      var y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+</body>
+</html>

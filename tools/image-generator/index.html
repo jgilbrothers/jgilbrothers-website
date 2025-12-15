@@ -2,104 +2,284 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Image Generator | J GIL Brothers</title>
-  <meta name="description" content="Generate images with J GIL Brothers free AI tools." />
-  <link rel="stylesheet" href="/styles/styles.css">
-  <script src="/scripts/main.js" defer></script>
-  <script src="/scripts/image-generator.js" defer></script>
+
+  <!-- If your site already has global CSS, keep this link. -->
+  <link rel="stylesheet" href="/styles/styles.css" />
+
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#111827;
+      --panel2:#0f172a;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:rgba(255,255,255,.12);
+      --good:#86efac;
+      --warn:#fde68a;
+      --bad:#fca5a5;
+      --btn:#1f2937;
+      --btn2:#111827;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* ---- Header/Nav ----
+       IMPORTANT:
+       If your site has a universal header injected by /scripts/main.js,
+       this block won’t fight it. It only shows if nothing injects.
+    */
+    .fallback-header{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      border-bottom:1px solid var(--border);
+    }
+    .fallback-header a{
+      color:var(--text);
+      text-decoration:none;
+      opacity:.9;
+    }
+    .fallback-header a:hover{ opacity:1; }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:26px 18px 60px;
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size:44px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      margin:0 0 18px;
+      line-height:1.4;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      max-width:900px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 210px 1fr;
+      gap:12px;
+      align-items:start;
+    }
+
+    @media (max-width:780px){
+      h1{ font-size:34px; }
+      .row{ grid-template-columns:1fr; }
+    }
+
+    label{
+      color:var(--muted);
+      font-size:14px;
+      padding-top:10px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      box-sizing:border-box;
+      background:var(--panel2);
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px 12px;
+      font-size:15px;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(255,255,255,.25);
+    }
+
+    /* Fixed prompt box: no “expanding” */
+    textarea{
+      height:150px;
+      min-height:150px;
+      max-height:150px;
+      resize:none;
+      overflow:auto;
+      line-height:1.35;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+
+    .btn{
+      background:linear-gradient(180deg, var(--btn), var(--btn2));
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 14px;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .result{
+      margin-top:16px;
+      padding:14px;
+      background:var(--panel2);
+      border:1px solid var(--border);
+      border-radius:14px;
+      min-height:72px;
+    }
+
+    .status-good{ color:var(--good); }
+    .status-warn{ color:var(--warn); }
+    .status-bad{ color:var(--bad); }
+
+    .img-wrap{
+      margin-top:12px;
+    }
+    .img-wrap img{
+      display:block;
+      max-width:100%;
+      height:auto;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#0a0a0a;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+      opacity:.9;
+    }
+  </style>
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="container">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">J GIL Brothers</a>
+  <!-- If your normal site header isn’t injected, this shows as a fallback. -->
+  <div class="fallback-header" id="fallbackHeader">
+    <a href="/">J GIL Brothers</a>
+    <a href="/home/">Home</a>
+    <a href="/creators-hub/">Creators Hub</a>
+    <a href="/jgil-studios/">J GIL Studios</a>
+    <a href="/tools/">Tools</a>
+    <a href="/about/">About</a>
+  </div>
 
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/">Home</a>
-        <a href="/creators-hub/">Creators Hub</a>
-        <a href="/jgil-studios/">J GIL Studios</a>
-        <a href="/tools/">Tools</a>
-        <a href="/about/">About</a>
-      </nav>
-    </div>
-  </header>
+  <div class="wrap">
+    <h1>Image Generator</h1>
+    <p class="subtitle">
+      Generate an image from a prompt. Limits are enforced per email.
+    </p>
 
-  <main class="site-main">
-    <section class="container">
-      <h1>Image Generator</h1>
-      <p>
-        Generate an image from a prompt. Limits are enforced per email.
-      </p>
-
-      <div class="card">
-        <form id="imgGenForm" class="form">
-          <div class="form-row">
-            <label for="email">Email (required)</label>
-            <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
-            <small class="muted">We use this to apply monthly limits. No password yet.</small>
+    <div class="card">
+      <div class="grid">
+        <div class="row">
+          <label for="email">Email (required)</label>
+          <div>
+            <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+            <div class="hint">We use this to apply monthly limits. No password yet.</div>
           </div>
+        </div>
 
-          <div class="form-row">
-            <label for="prompt">Prompt</label>
-            <textarea id="prompt" name="prompt" rows="5" required
-              placeholder="Example: A cinematic portrait of a lion wearing sunglasses, studio lighting, ultra-detailed, sharp focus"></textarea>
-            <small class="muted">Tip: be specific about subject, lighting, style, and camera framing.</small>
+        <div class="row">
+          <label for="prompt">Prompt</label>
+          <div>
+            <textarea id="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed."></textarea>
+            <div class="hint">Tip: be specific about subject, lighting, style, and camera framing.</div>
           </div>
+        </div>
 
-          <div class="form-row">
-            <label for="aspectRatio">Aspect ratio</label>
-            <select id="aspectRatio" name="aspectRatio">
-              <option value="1:1" selected>1:1 (Square)</option>
+        <div class="row">
+          <label for="aspect">Aspect ratio</label>
+          <div class="toolbar">
+            <select id="aspect">
+              <option value="1:1">1:1 (Square)</option>
               <option value="16:9">16:9 (Landscape)</option>
               <option value="9:16">9:16 (Portrait)</option>
               <option value="4:3">4:3</option>
               <option value="3:4">3:4</option>
             </select>
-          </div>
 
-          <div class="form-row">
-            <button id="generateBtn" class="btn" type="submit">Generate Image</button>
-            <span id="status" class="status" aria-live="polite"></span>
-          </div>
-
-          <div class="form-row">
-            <small id="quota" class="muted"></small>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <h2>Result</h2>
-
-        <div id="resultWrap" class="result-wrap" hidden>
-          <img id="resultImg" alt="Generated image result" />
-          <div class="result-actions">
-            <a id="downloadLink" class="btn secondary" href="#" download="jgil-image.png">Download</a>
+            <button class="btn" id="generateBtn" type="button">Generate Image</button>
+            <span class="meta" id="remainingText"></span>
           </div>
         </div>
 
-        <pre id="errorBox" class="error-box" hidden></pre>
+        <div class="result" id="result">
+          <div class="meta">Result will appear here.</div>
+        </div>
+
+        <footer>© 2025 J GIL Brothers. Built on Cloudflare.</footer>
       </div>
-
-      <p class="muted">
-        If you hit a limit, you’ll see a clear message. Try again next minute (burst limit) or next month (monthly limit).
-      </p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</p>
     </div>
-  </footer>
+  </div>
+
+  <!-- Keep if your site uses it; otherwise it’s harmless -->
+  <script src="/scripts/main.js"></script>
+
+  <script src="/scripts/image-generator.js"></script>
 
   <script>
-    // Tiny footer year helper (safe, static-only)
-    (function () {
-      var y = document.getElementById("year");
-      if (y) y.textContent = String(new Date().getFullYear());
-    })();
+    // If your main.js injects a universal header, hide the fallback automatically.
+    // (This is safe even if main.js doesn’t do anything.)
+    setTimeout(() => {
+      const hasRealNav =
+        document.querySelector('header nav') ||
+        document.querySelector('.site-header') ||
+        document.querySelector('#siteHeader') ||
+        document.querySelector('[data-site-header]');
+      if (hasRealNav) {
+        const el = document.getElementById('fallbackHeader');
+        if (el) el.style.display = 'none';
+      }
+    }, 300);
   </script>
 </body>
 </html>

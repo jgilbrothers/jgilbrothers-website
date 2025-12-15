@@ -5,79 +5,133 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Image Generator | J GIL Brothers</title>
   <meta name="description" content="Generate an image from a prompt. Limits are enforced per email." />
-  <link rel="icon" href="/assets/images/global/jgil-brothers-logo-2025.png" />
+
   <link rel="stylesheet" href="/styles/styles.css" />
   <script src="/scripts/main.js" defer></script>
   <script src="/scripts/image-generator.js" defer></script>
+
+  <!-- Page-only styling: lighter background + dark inputs -->
+  <style>
+    body.tool-light {
+      background: #f3f4f6;
+      color: #0b0f19;
+    }
+    body.tool-light main {
+      padding-bottom: 48px;
+    }
+    body.tool-light .tool-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px;
+    }
+    body.tool-light .tool-card {
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    body.tool-light label {
+      font-weight: 600;
+      display: block;
+      margin: 14px 0 6px;
+    }
+    body.tool-light input,
+    body.tool-light textarea,
+    body.tool-light select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.16);
+      background: #0b1220;
+      color: #f8fafc;
+      padding: 10px 12px;
+      outline: none;
+    }
+    body.tool-light textarea { resize: vertical; min-height: 120px; }
+    body.tool-light .hint { margin: 6px 0 0; opacity: .8; font-size: 14px; }
+    body.tool-light .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+      margin-top: 10px;
+    }
+    @media (max-width: 760px) { body.tool-light .row { grid-template-columns: 1fr; } }
+
+    body.tool-light button {
+      border-radius: 10px;
+      border: 0;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    body.tool-light button:disabled { opacity: .6; cursor: not-allowed; }
+
+    body.tool-light .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(2, 6, 23, .06);
+      border: 1px solid rgba(2, 6, 23, .10);
+      min-height: 20px;
+      white-space: pre-wrap;
+    }
+    body.tool-light .results {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    body.tool-light .result-img {
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fff;
+    }
+  </style>
 </head>
 
-<body>
-  <!-- Global Header (matches Home nav order + routes) -->
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">
-        <img
-          class="brand-mark"
-          src="/assets/images/global/jgil-brothers-logo-2025.png"
-          alt="J GIL Brothers"
-          loading="eager"
-        />
-        <div class="brand-text">
-          <div class="brand-name">J GIL Brothers</div>
-          <div class="brand-tagline">Content Creation Studio</div>
-        </div>
+<body class="tool-light">
+  <!-- Header matches Home: text brand + same nav order -->
+  <header>
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <div class="site-top">
+      <a class="site-brand" href="/" aria-label="Home">
+        <div class="site-brand__title">J GIL Brothers</div>
+        <div class="site-brand__subtitle">Content Creation Studio</div>
       </a>
 
       <nav class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/about/">About</a>
-        <a class="nav-link" href="/tools/">Free AI Tools</a>
-        <a class="nav-link" href="/jgil-studios/">J GIL Studios</a>
-        <a class="nav-link" href="/creators-hub/">Creators Hub</a>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/tools/">Free AI Tools</a>
+        <a href="/jgil-studios/">J GIL Studios</a>
+        <a href="/creators-hub/">Creators Hub</a>
       </nav>
     </div>
   </header>
 
-  <main class="site-main" id="main" role="main">
-    <section class="section">
-      <div class="container">
-        <header class="section-head">
-          <h1 class="h1">Image Generator</h1>
-          <p class="subhead">Generate an image from a prompt. Limits are enforced per email.</p>
-        </header>
+  <main id="main">
+    <div class="tool-wrap">
+      <h1>Image Generator</h1>
+      <p>Generate an image from a prompt. Limits are enforced per email.</p>
 
-        <!-- Tool Panel -->
-        <section class="panel">
-          <form class="form-grid" id="imageGenForm" autocomplete="off">
-            <div class="field">
-              <label for="email" class="label">Email (required)</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                class="input"
-                placeholder="you@example.com"
-                required
-              />
-              <p class="hint">We use this to apply monthly limits. No password yet.</p>
-            </div>
+      <div class="tool-card">
+        <form id="imageGenForm">
+          <label for="email">Email (required)</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <p class="hint">We use this to apply monthly limits. No password yet.</p>
 
-            <div class="field field-wide">
-              <label for="prompt" class="label">Prompt</label>
-              <textarea
-                id="prompt"
-                name="prompt"
-                class="textarea"
-                rows="5"
-                placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed."
-                required
-              ></textarea>
-              <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
-            </div>
+          <label for="prompt">Prompt</label>
+          <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>
+          <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
 
-            <div class="field">
-              <label for="aspect" class="label">Aspect ratio</label>
-              <select id="aspect" name="aspect" class="select">
+          <div class="row">
+            <div>
+              <label for="aspect">Aspect ratio</label>
+              <select id="aspect" name="aspect">
                 <option value="1:1" selected>1:1 (Square)</option>
                 <option value="16:9">16:9 (Landscape)</option>
                 <option value="9:16">9:16 (Portrait)</option>
@@ -86,34 +140,22 @@
               </select>
             </div>
 
-            <div class="field">
-              <label class="label sr-only" for="generateBtn">Generate</label>
-              <button id="generateBtn" type="submit" class="button button-primary">
-                Generate Image
-              </button>
+            <div>
+              <button id="generateBtn" type="submit">Generate Image</button>
             </div>
-
-            <div class="field field-wide">
-              <div id="status" class="status" aria-live="polite"></div>
-            </div>
-          </form>
-        </section>
-
-        <!-- Results -->
-        <section class="section">
-          <div class="container">
-            <h2 class="h2">Results</h2>
-            <div id="results" class="results-grid"></div>
           </div>
-        </section>
+
+          <div id="status" class="status" aria-live="polite"></div>
+        </form>
       </div>
-    </section>
+
+      <h2 style="margin-top:18px;">Results</h2>
+      <div id="results" class="results"></div>
+    </div>
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container footer-inner">
-      <div class="muted">© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</div>
-    </div>
+  <footer>
+    <small>© <span id="year"></span> J GIL Brothers. Built on Cloudflare.</small>
   </footer>
 
   <script>

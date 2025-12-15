@@ -1,7 +1,8 @@
 /* Image Generator (frontend)
    - Strong status + error handling
-   - Works with /tools/image-generator/index.html IDs
-   - Expects a same-origin API endpoint: /api/image-generate
+   - Results displayed as cards (not huge)
+   - Click image to open lightbox
+   - Expects same-origin endpoint: /api/image-generate
 */
 
 (function () {
@@ -13,9 +14,10 @@
   const statusEl = document.getElementById("status");
   const resultsEl = document.getElementById("results");
 
-  if (!form || !emailEl || !promptEl || !aspectEl || !btn || !statusEl || !resultsEl) {
-    return; // page not loaded / IDs missing
-  }
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+
+  if (!form || !emailEl || !promptEl || !aspectEl || !btn || !statusEl || !resultsEl) return;
 
   const API_ENDPOINT = "/api/image-generate";
   const TIMEOUT_MS = 45000;
@@ -33,20 +35,52 @@
     try { return JSON.parse(text); } catch { return null; }
   }
 
-  function addImage(src, alt) {
+  function openLightbox(src) {
+    if (!lightbox || !lightboxImg) return;
+    lightboxImg.src = src;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+  }
+
+  function closeLightbox() {
+    if (!lightbox || !lightboxImg) return;
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    lightboxImg.src = "";
+  }
+
+  if (lightbox) {
+    lightbox.addEventListener("click", closeLightbox);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+  }
+
+  function addResultCard(src, prompt, aspect) {
+    const card = document.createElement("div");
+    card.className = "result-card";
+
     const img = document.createElement("img");
-    img.className = "result-img";
     img.src = src;
-    img.alt = alt || "Generated image";
-    resultsEl.prepend(img);
+    img.alt = "Generated image";
+    img.loading = "lazy";
+    img.addEventListener("click", () => openLightbox(src));
+
+    const meta = document.createElement("div");
+    meta.className = "result-meta";
+    meta.textContent = `Aspect: ${aspect} • ${prompt.length > 90 ? prompt.slice(0, 90) + "…" : prompt}`;
+
+    card.appendChild(img);
+    card.appendChild(meta);
+
+    resultsEl.prepend(card);
   }
 
   async function fetchWithTimeout(url, options, timeoutMs) {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const res = await fetch(url, { ...options, signal: controller.signal });
-      return res;
+      return await fetch(url, { ...options, signal: controller.signal });
     } finally {
       clearTimeout(t);
     }
@@ -64,15 +98,7 @@
       return;
     }
 
-    // quick heads-up for weapon prompts (common safety block)
-    if (/gun|rifle|machine gun|pistol|shotgun/i.test(prompt)) {
-      setStatus(
-        "Heads up: prompts mentioning weapons often get blocked. If it fails, try removing weapon wording.\nGenerating..."
-      );
-    } else {
-      setStatus("Generating...");
-    }
-
+    setStatus("Generating...");
     disable(true);
 
     try {
@@ -92,7 +118,7 @@
       if (contentType.startsWith("image/")) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
-        addImage(url, prompt);
+        addResultCard(url, prompt, aspect);
         setStatus("Done.");
         return;
       }
@@ -101,7 +127,6 @@
       const data = safeJsonParse(text);
 
       if (!res.ok) {
-        // show server error details
         const errMsg =
           (data && (data.error || data.message)) ||
           text ||
@@ -109,51 +134,36 @@
         throw new Error(errMsg);
       }
 
-      // Supported response shapes:
-      // { imageUrl: "https://..." }
-      // { url: "https://..." }
-      // { image: "base64..." } or { b64: "..." }
-      // { dataUrl: "data:image/png;base64,..." }
-      const imageUrl =
-        (data && (data.imageUrl || data.url)) ||
-        null;
-
-      const dataUrl =
-        (data && data.dataUrl) ||
-        null;
-
-      const base64 =
-        (data && (data.image || data.b64)) ||
-        null;
+      const imageUrl = (data && (data.imageUrl || data.url)) || null;
+      const dataUrl = (data && data.dataUrl) || null;
+      const base64 = (data && (data.image || data.b64)) || null;
 
       if (dataUrl && typeof dataUrl === "string" && dataUrl.startsWith("data:image/")) {
-        addImage(dataUrl, prompt);
+        addResultCard(dataUrl, prompt, aspect);
         setStatus("Done.");
         return;
       }
 
       if (imageUrl && typeof imageUrl === "string") {
-        addImage(imageUrl, prompt);
+        addResultCard(imageUrl, prompt, aspect);
         setStatus("Done.");
         return;
       }
 
       if (base64 && typeof base64 === "string") {
-        // assume png if not specified
         const src = base64.startsWith("data:image/")
           ? base64
           : `data:image/png;base64,${base64}`;
-        addImage(src, prompt);
+        addResultCard(src, prompt, aspect);
         setStatus("Done.");
         return;
       }
 
-      // If we get here, API returned OK but no recognizable payload
       setStatus("Generated, but response format was unexpected. Check Worker response JSON.");
     } catch (err) {
       const msg =
         err && err.name === "AbortError"
-          ? "Timed out. If your prompt is heavy or blocked, it may not complete. Try a simpler prompt."
+          ? "Timed out. Try a simpler prompt."
           : (err && err.message) ? err.message : "Unknown error.";
       setStatus(`Error: ${msg}`);
     } finally {

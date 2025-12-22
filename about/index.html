@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About — J GIL Brothers</title>
+  <title>About â J GIL Brothers</title>
   <meta name="description" content="J GIL Brothers is a content creation studio built on discipline, not hype. AI as craft. Creation with intent." />
   <meta name="theme-color" content="#0b0b0c" />
 
@@ -12,37 +12,13 @@
 
   <link rel="stylesheet" href="/styles/styles.css" />
   <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
 </head>
 
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span class="brand-text">
-          <span class="brand-name">J GIL Brothers</span>
-          <span class="brand-tag">Content Creation Studio</span>
-        </span>
-      </a>
-
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-        <span class="nav-toggle-lines" aria-hidden="true"></span>
-        <span class="sr-only">Menu</span>
-      </button>
-
-      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
-        <ul class="nav-list">
-          <li><a class="nav-link" href="/">Home</a></li>
-          <li><a class="nav-link" href="/about/" aria-current="page">About</a></li>
-          <li><a class="nav-link" href="/tools/">Free AI Tools</a></li>
-          <li><a class="nav-link" href="/jgil-studios/">J GIL Studios</a></li>
-          <li><a class="nav-link" href="/creators-hub/">Creators Hub</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <div id="site-header"></div>
 
   <main id="main" class="site-main">
     <section class="section hero" aria-label="About hero">
@@ -51,7 +27,7 @@
           <p class="kicker">About</p>
           <h1 class="hero-title">AI as craft. Creation with intent.</h1>
           <p class="hero-subtitle">
-            J GIL Brothers is a content creation studio — built to produce original work with structure, repetition, and taste.
+            J GIL Brothers is a content creation studio â built to produce original work with structure, repetition, and taste.
             The tools serve the process. The process serves the work.
           </p>
 
@@ -61,7 +37,7 @@
           </div>
 
           <p class="hero-note">
-            If it doesn’t feel cohesive, it doesn’t ship.
+            If it doesnât feel cohesive, it doesnât ship.
           </p>
         </div>
 
@@ -81,7 +57,7 @@
         <div class="section-head">
           <h2 class="section-title">What We Believe</h2>
           <p class="section-subtitle">
-            This is not a trend chase. It’s a studio system: consistent pages, consistent output, consistent voice.
+            This is not a trend chase. Itâs a studio system: consistent pages, consistent output, consistent voice.
           </p>
         </div>
 
@@ -89,14 +65,14 @@
           <div class="card">
             <h3 class="card-title">Discipline beats hype.</h3>
             <p class="card-text">
-              We don’t build for virality. We build for durability — projects that can compound over time.
+              We donât build for virality. We build for durability â projects that can compound over time.
             </p>
           </div>
 
           <div class="card">
             <h3 class="card-title">AI is an instrument.</h3>
             <p class="card-text">
-              Prompts aren’t the product. The product is taste + iteration + clear constraints.
+              Prompts arenât the product. The product is taste + iteration + clear constraints.
             </p>
           </div>
 
@@ -114,7 +90,7 @@
       <div class="container">
         <div class="section-head">
           <h2 class="section-title">Where to Go Next</h2>
-          <p class="section-subtitle">Pick a lane — work, tools, or community — and go deeper.</p>
+          <p class="section-subtitle">Pick a lane â work, tools, or community â and go deeper.</p>
         </div>
 
         <div class="pillars-grid">
@@ -150,25 +126,6 @@
     </section>
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container footer-inner">
-      <div class="footer-left">
-        <p class="footer-mark">J GIL Brothers</p>
-        <p class="footer-note">A content creation studio built on discipline, not hype.</p>
-      </div>
-
-      <nav class="footer-nav" aria-label="Footer navigation">
-        <a href="/">Home</a>
-        <a href="/about/">About</a>
-        <a href="/tools/">Free AI Tools</a>
-        <a href="/jgil-studios/">J GIL Studios</a>
-        <a href="/creators-hub/">Creators Hub</a>
-      </nav>
-
-      <div class="footer-right">
-        <p class="footer-small">© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+  <div id="site-footer"></div>
 </body>
 </html>

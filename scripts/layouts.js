@@ -1,4 +1,4 @@
-/* layout.js
+/* /scripts/layouts.js
    Injects shared header/footer and activates current nav link.
    Compatible with existing /styles/styles.css header/footer system.
 */
@@ -72,7 +72,7 @@
         footerMount.innerHTML = await fetchText("/components/footer.html");
       }
     } catch (e) {
-      console.error("[layout.js]", e);
+      console.error("[layouts.js]", e);
     }
   })();
 })();

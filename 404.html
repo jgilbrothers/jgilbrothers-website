@@ -3,37 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>404 — Page Not Found | J GIL Brothers</title>
+  <title>404 â Page Not Found | J GIL Brothers</title>
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="description" content="The page you’re looking for doesn’t exist. Use the navigation to get back on track." />
+  <meta name="description" content="The page youâre looking for doesnât exist. Use the navigation to get back on track." />
 
   <link rel="stylesheet" href="/styles/styles.css" />
   <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
 </head>
 
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/" aria-label="J GIL Brothers Home">
-        <span class="brand-text">J GIL Brothers</span>
-      </a>
-
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="/about/">About</a>
-        <a href="/tools/">Tools</a>
-        <a href="/creators-hub/">Creators Hub</a>
-        <a href="/jgil-studios/">J GIL Studios</a>
-      </nav>
-    </div>
-  </header>
+  <div id="site-header"></div>
 
   <main id="main" class="site-main">
     <section class="container section">
-      <h1>404 — Page Not Found</h1>
+      <h1>404 â Page Not Found</h1>
       <p>
-        That route doesn’t exist on <strong>jgilbrothers.com</strong>.
+        That route doesnât exist on <strong>jgilbrothers.com</strong>.
         This usually means a link is still pointing to an old <code>.html</code> path instead of the folder route.
       </p>
 
@@ -52,11 +40,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p class="muted">© <span id="year"></span> J GIL Brothers. All rights reserved.</p>
-    </div>
-  </footer>
+  <div id="site-footer"></div>
 
   <script>
     // Safe fallback if /scripts/main.js doesn't set the year.

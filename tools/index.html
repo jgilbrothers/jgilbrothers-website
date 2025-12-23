@@ -23,13 +23,30 @@
       background:#f3f4f6;
       color:#0b0f19;
     }
-    .tool-page .section-head{
+    .tools-hero{
+      padding-top:60px;
+      padding-bottom:28px;
+    }
+    .tools-hero__head{
       background:#fff;
       border:1px solid rgba(0,0,0,.08);
       border-radius:14px;
       padding:20px 18px;
       box-shadow:0 10px 30px rgba(0,0,0,.08);
       margin-bottom:18px;
+    }
+    .tool-generator-section{
+      padding-top:0;
+    }
+    .tool-generator-root{
+      position:relative;
+      contain:layout style paint;
+      isolation:isolate;
+      overflow:hidden;
+      background:transparent;
+      margin:0;
+      padding:0;
+      border-radius:16px;
     }
     .tool-page .section-title{margin:0 0 10px}
     .tool-page .section-subtitle{margin:0;color:#4b5563}
@@ -115,6 +132,7 @@
       border-radius:14px;
       background:#fff;
     }
+    .tool-results-title{margin:18px 0 10px}
   </style>
 </head>
 
@@ -122,48 +140,54 @@
   <div id="site-header"></div>
 
   <main id="main" class="site-main">
-    <section class="section">
+    <section class="section tools-hero">
       <div class="container">
-        <div class="section-head">
+        <header class="section-head tools-hero__head">
           <p class="kicker">Free tool</p>
           <h1 class="section-title">Image Generator</h1>
           <p class="section-subtitle">Generate an image from a prompt. Limits are enforced per email.</p>
-        </div>
+        </header>
+      </div>
+    </section>
 
-        <div class="tool-wrap">
-          <div class="tool-card">
-            <form id="imageGenForm">
-              <label for="email">Email (required)</label>
-              <input id="email" name="email" type="email" placeholder="you@example.com" required />
-              <p class="hint">We use this to apply monthly limits. No password yet.</p>
+    <section class="section tool-generator-section" aria-labelledby="tools-generator-title">
+      <div class="container">
+        <section id="tools-generator-root" class="tool-generator-root" aria-label="Image generator">
+          <div class="tool-wrap">
+            <div class="tool-card">
+              <form id="imageGenForm">
+                <label for="email">Email (required)</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" required />
+                <p class="hint">We use this to apply monthly limits. No password yet.</p>
 
-              <label for="prompt">Prompt</label>
-              <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>
-              <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
+                <label for="prompt">Prompt</label>
+                <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>
+                <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
 
-              <div class="row">
-                <div>
-                  <label for="aspect">Aspect ratio</label>
-                  <select id="aspect" name="aspect">
-                    <option value="1:1" selected>1:1 (Square)</option>
-                    <option value="16:9">16:9 (Landscape)</option>
-                    <option value="9:16">9:16 (Portrait)</option>
-                    <option value="4:5">4:5</option>
-                    <option value="3:2">3:2</option>
-                  </select>
+                <div class="row">
+                  <div>
+                    <label for="aspect">Aspect ratio</label>
+                    <select id="aspect" name="aspect">
+                      <option value="1:1" selected>1:1 (Square)</option>
+                      <option value="16:9">16:9 (Landscape)</option>
+                      <option value="9:16">9:16 (Portrait)</option>
+                      <option value="4:5">4:5</option>
+                      <option value="3:2">3:2</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button id="generateBtn" type="submit">Generate Image</button>
+                  </div>
                 </div>
-                <div>
-                  <button id="generateBtn" type="submit">Generate Image</button>
-                </div>
-              </div>
 
-              <div id="status" class="status" aria-live="polite"></div>
-            </form>
+                <div id="status" class="status" aria-live="polite"></div>
+              </form>
+            </div>
+
+            <h2 id="tools-generator-title" class="tool-results-title">Results</h2>
+            <div id="results" class="results"></div>
           </div>
-
-          <h2 style="margin-top:18px;">Results</h2>
-          <div id="results" class="results"></div>
-        </div>
+        </section>
       </div>
     </section>
   </main>

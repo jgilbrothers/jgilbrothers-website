@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Free AI Tools | J GIL Brothers</title>
-  <meta name="description" content="Generate an image from a prompt. Limits are enforced per email." />
+  <meta name="description" content="Free AI tools from J GIL Brothers, including an image generator with fair-use limits." />
 
   <link rel="stylesheet" href="/styles/styles.css" />
 
@@ -24,21 +24,76 @@
       color:#0b0f19;
     }
     .tools-hero{
-      padding-top:60px;
-      padding-bottom:28px;
+      padding-top:72px;
+      padding-bottom:12px;
     }
     .tools-hero__head{
       background:#fff;
       border:1px solid rgba(0,0,0,.08);
-      border-radius:14px;
-      padding:20px 18px;
+      border-radius:18px;
+      padding:24px 22px;
       box-shadow:0 10px 30px rgba(0,0,0,.08);
-      margin-bottom:18px;
+      margin:0 auto;
+      max-width:960px;
     }
-    .tool-generator-section{
-      padding-top:0;
+    .tools-hero__rule{
+      margin:10px 0 0;
+      color:#4b5563;
+      font-size:14px;
     }
-    .tool-generator-root{
+    .tools-collection{
+      padding-top:30px;
+    }
+    .tools-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:22px;
+    }
+    .tool-module{
+      background:#fff;
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 12px 34px rgba(0,0,0,.08);
+    }
+    .tool-module__head{
+      margin:4px 0 16px;
+    }
+    .tool-module__kicker{
+      color:#6b7280;
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:0 0 6px;
+    }
+    .tool-module__title{
+      margin:0 0 8px;
+      font-size:22px;
+    }
+    .tool-module__desc{
+      margin:0;
+      color:#4b5563;
+      max-width:60ch;
+    }
+    .tool-module__body{
+      margin-top:6px;
+    }
+    .tool-module--placeholder{
+      display:grid;
+      gap:10px;
+      color:#4b5563;
+    }
+    .tool-module--placeholder .pill{
+      display:inline-flex;
+      align-self:flex-start;
+    }
+    @media (max-width:720px){
+      .tools-hero{padding-top:58px}
+      .tool-module{padding:16px}
+    }
+
+    /* generator scope */
+    #tools-generator-root{
       position:relative;
       contain:layout style paint;
       isolation:isolate;
@@ -48,19 +103,16 @@
       padding:0;
       border-radius:16px;
     }
-    .tool-page .section-title{margin:0 0 10px}
-    .tool-page .section-subtitle{margin:0;color:#4b5563}
-    .tool-page .kicker{color:#6b7280;margin:0 0 8px}
-    .tool-wrap{max-width:980px;margin:0 auto;padding:20px 18px 32px}
-    .tool-card{
+    #tools-generator-root .tool-wrap{max-width:980px;margin:0 auto;padding:10px 0 6px}
+    #tools-generator-root .tool-card{
       background:#fff;
       border:1px solid rgba(0,0,0,.10);
       border-radius:14px;
       padding:18px;
       box-shadow:0 10px 30px rgba(0,0,0,.08);
     }
-    .tool-wrap label{font-weight:600;display:block;margin:14px 0 6px}
-    .tool-wrap input,.tool-wrap textarea,.tool-wrap select{
+    #tools-generator-root label{font-weight:600;display:block;margin:14px 0 6px}
+    #tools-generator-root input,#tools-generator-root textarea,#tools-generator-root select{
       width:100%;
       border-radius:10px;
       border:1px solid rgba(0,0,0,.16);
@@ -69,19 +121,19 @@
       padding:10px 12px;
       outline:none;
     }
-    .tool-wrap textarea{resize:vertical;min-height:120px}
-    .tool-wrap .hint{margin:6px 0 0;opacity:.8;font-size:14px}
-    .tool-wrap .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;margin-top:10px}
-    @media(max-width:760px){.tool-wrap .row{grid-template-columns:1fr}}
+    #tools-generator-root textarea{resize:vertical;min-height:120px}
+    #tools-generator-root .hint{margin:6px 0 0;opacity:.8;font-size:14px}
+    #tools-generator-root .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;margin-top:10px}
+    @media(max-width:760px){#tools-generator-root .row{grid-template-columns:1fr}}
 
-    .tool-wrap button{
+    #tools-generator-root button{
       border-radius:10px;border:0;
       padding:11px 14px;
       font-weight:700;cursor:pointer;
     }
-    .tool-wrap button:disabled{opacity:.6;cursor:not-allowed}
+    #tools-generator-root button:disabled{opacity:.6;cursor:not-allowed}
 
-    .tool-wrap .status{
+    #tools-generator-root .status{
       margin-top:12px;
       padding:10px 12px;
       border-radius:10px;
@@ -91,22 +143,21 @@
       white-space:pre-wrap;
     }
 
-    /* results: not loud */
-    .tool-wrap .results{
+    #tools-generator-root .results{
       margin-top:18px;
       display:grid;
       grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
       gap:14px;
       align-items:start;
     }
-    .tool-wrap .result-card{
+    #tools-generator-root .result-card{
       background:#fff;
       border:1px solid rgba(0,0,0,.12);
       border-radius:14px;
       overflow:hidden;
       box-shadow:0 8px 20px rgba(0,0,0,.06);
     }
-    .tool-wrap .result-card img{
+    #tools-generator-root .result-card img{
       width:100%;
       height:auto;
       display:block;
@@ -115,9 +166,9 @@
       background:#fff;
       cursor:zoom-in;
     }
-    .tool-wrap .result-meta{padding:10px 12px;font-size:12px;opacity:.75;line-height:1.3}
+    #tools-generator-root .result-meta{padding:10px 12px;font-size:12px;opacity:.75;line-height:1.3}
 
-    .tool-page .lightbox{
+    #lightbox{
       position:fixed;inset:0;
       background:rgba(0,0,0,.75);
       display:none;
@@ -125,14 +176,14 @@
       padding:24px;
       z-index:9999;
     }
-    .tool-page .lightbox.open{display:flex}
-    .tool-page .lightbox img{
+    #lightbox.open{display:flex}
+    #lightbox img{
       max-width:min(1000px, 95vw);
       max-height:90vh;
       border-radius:14px;
       background:#fff;
     }
-    .tool-results-title{margin:18px 0 10px}
+    #tools-generator-root .tool-results-title{margin:18px 0 10px}
   </style>
 </head>
 
@@ -143,51 +194,69 @@
     <section class="section tools-hero">
       <div class="container">
         <header class="section-head tools-hero__head">
-          <p class="kicker">Free tool</p>
-          <h1 class="section-title">Image Generator</h1>
-          <p class="section-subtitle">Generate an image from a prompt. Limits are enforced per email.</p>
+          <p class="kicker">Free tools</p>
+          <h1 class="section-title">Free AI Tools</h1>
+          <p class="section-subtitle">Explore useful AI utilities from J GIL Brothers. Start with the image generator and watch for more tools soon.</p>
+          <p class="tools-hero__rule">Fair-use limits apply per email to keep things fast for everyone.</p>
         </header>
       </div>
     </section>
 
-    <section class="section tool-generator-section" aria-labelledby="tools-generator-title">
+    <section class="section tools-collection" aria-label="Free AI tools">
       <div class="container">
-        <section id="tools-generator-root" class="tool-generator-root" aria-label="Image generator">
-          <div class="tool-wrap">
-            <div class="tool-card">
-              <form id="imageGenForm">
-                <label for="email">Email (required)</label>
-                <input id="email" name="email" type="email" placeholder="you@example.com" required />
-                <p class="hint">We use this to apply monthly limits. No password yet.</p>
+        <div class="tools-grid">
+          <section class="tool-module tool-module--generator" aria-labelledby="tools-generator-title">
+            <header class="tool-module__head">
+              <p class="tool-module__kicker">Creative</p>
+              <h2 id="tools-generator-title" class="tool-module__title">Image Generator</h2>
+              <p class="tool-module__desc">Generate an image from a prompt. Limits are enforced per email to keep usage fair.</p>
+            </header>
+            <div class="tool-module__body">
+              <div id="tools-generator-root" class="tool-generator-root" aria-label="Image generator">
+                <div class="tool-wrap">
+                  <div class="tool-card">
+                    <form id="imageGenForm">
+                      <label for="email">Email (required)</label>
+                      <input id="email" name="email" type="email" placeholder="you@example.com" required />
+                      <p class="hint">We use this to apply monthly limits. No password yet.</p>
 
-                <label for="prompt">Prompt</label>
-                <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>
-                <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
+                      <label for="prompt">Prompt</label>
+                      <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>
+                      <p class="hint">Tip: be specific about subject, lighting, style, and camera framing.</p>
 
-                <div class="row">
-                  <div>
-                    <label for="aspect">Aspect ratio</label>
-                    <select id="aspect" name="aspect">
-                      <option value="1:1" selected>1:1 (Square)</option>
-                      <option value="16:9">16:9 (Landscape)</option>
-                      <option value="9:16">9:16 (Portrait)</option>
-                      <option value="4:5">4:5</option>
-                      <option value="3:2">3:2</option>
-                    </select>
+                      <div class="row">
+                        <div>
+                          <label for="aspect">Aspect ratio</label>
+                          <select id="aspect" name="aspect">
+                            <option value="1:1" selected>1:1 (Square)</option>
+                            <option value="16:9">16:9 (Landscape)</option>
+                            <option value="9:16">9:16 (Portrait)</option>
+                            <option value="4:5">4:5</option>
+                            <option value="3:2">3:2</option>
+                          </select>
+                        </div>
+                        <div>
+                          <button id="generateBtn" type="submit">Generate Image</button>
+                        </div>
+                      </div>
+
+                      <div id="status" class="status" aria-live="polite"></div>
+                    </form>
                   </div>
-                  <div>
-                    <button id="generateBtn" type="submit">Generate Image</button>
-                  </div>
+
+                  <h3 class="tool-results-title">Results</h3>
+                  <div id="results" class="results"></div>
                 </div>
-
-                <div id="status" class="status" aria-live="polite"></div>
-              </form>
+              </div>
             </div>
+          </section>
 
-            <h2 id="tools-generator-title" class="tool-results-title">Results</h2>
-            <div id="results" class="results"></div>
-          </div>
-        </section>
+          <section class="tool-module tool-module--placeholder" aria-label="Upcoming tools">
+            <div class="pill">Coming soon</div>
+            <h3 class="tool-module__title">More tools on the way</h3>
+            <p class="tool-module__desc">We&apos;re expanding this page with additional free utilities. Check back for new experiments and helpers.</p>
+          </section>
+        </div>
       </div>
     </section>
   </main>

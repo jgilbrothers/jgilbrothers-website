@@ -183,6 +183,20 @@
       background:#fff;
     }
     #tools-generator-root .tool-results-title{margin:18px 0 10px}
+
+    .tool-generator-visual{
+      margin:16px 0 12px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+    }
+    .tool-generator-visual img{
+      display:block;
+      width:100%;
+      height:auto;
+      object-fit:cover;
+    }
   </style>
 </head>
 
@@ -218,6 +232,13 @@
                       <label for="email">Email (required)</label>
                       <input id="email" name="email" type="email" placeholder="you@example.com" required />
                       <p class="hint">We use this to apply monthly limits. No password yet.</p>
+
+                      <div class="tool-generator-visual">
+                        <img
+                          src="/assets/images/global/J GIL-I Draw Dreams.jpg"
+                          alt="J GIL I Draw Dreams visual"
+                        />
+                      </div>
 
                       <label for="prompt">Prompt</label>
                       <textarea id="prompt" name="prompt" placeholder="Example: A cinematic portrait of a rhino wearing large over-ear headphones, playing chess, Picasso style, studio lighting, ultra-detailed." required></textarea>

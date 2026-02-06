@@ -66,12 +66,12 @@ a:hover{text-decoration:underline;text-underline-offset:4px}
 
 .brand{display:inline-flex;align-items:center;gap:12px}
 .brand-mark{
-  width:14px;height:14px;border-radius:999px;
-  background:
-    linear-gradient(90deg, var(--green), var(--green)) left/33% 100% no-repeat,
-    linear-gradient(90deg, #0b0b0c, #0b0b0c) center/33% 100% no-repeat,
-    linear-gradient(90deg, var(--red), var(--red)) right/33% 100% no-repeat;
+  width:28px;
+  height:28px;
+  border-radius:8px;
   border:1px solid rgba(239,233,221,.20);
+  object-fit:cover;
+  display:block;
 }
 .brand-text{display:grid;line-height:1.1}
 .brand-name{letter-spacing:.3px;font-size:16px}
@@ -169,7 +169,22 @@ a:hover{text-decoration:underline;text-underline-offset:4px}
 .btn-ghost:hover{background:rgba(20,21,26,.72);border-color:rgba(239,233,221,.22)}
 
 /* HERO + FRAMES */
-.hero{padding-top:64px}
+.hero{padding-top:24px}
+.hero-video{padding-top:64px}
+.hero-video__frame{
+  border:1px solid var(--line);
+  background:rgba(20,21,26,.55);
+  border-radius:calc(var(--radius) + 6px);
+  overflow:hidden;
+  box-shadow:0 22px 50px rgba(0,0,0,.35);
+}
+.hero-video__media{
+  width:100%;
+  height:auto;
+  display:block;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
 .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:stretch}
 .hero-copy{
   border:1px solid var(--line);
@@ -246,6 +261,32 @@ a:hover{text-decoration:underline;text-underline-offset:4px}
 .pillar-kicker{margin:0 0 10px;color:rgba(239,233,221,.62);letter-spacing:.08em;font-size:12px}
 .pillar-title{margin:0 0 8px}
 .pillar-text{margin:0 0 12px;color:var(--muted)}
+.pillar-leadin{margin:0 0 8px;color:rgba(239,233,221,.78)}
+.pillar-list{
+  margin:0 0 12px;
+  padding-left:18px;
+  color:var(--muted);
+  display:grid;
+  gap:6px;
+}
+.pillar-image{
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid rgba(239,233,221,.16);
+  background:rgba(11,11,12,.35);
+  margin:12px 0;
+}
+.pillar-image img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:cover;
+}
+.pillar-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
 .text-link{
   display:inline-flex;gap:8px;
   color:rgba(239,233,221,.92);

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio — Creator's Hub</title>
+  <meta name="description" content="Studio Level 1 in Creator's Hub." />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <link rel="canonical" href="https://jgilbrothers.com/creators-hub/studio/" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <link rel="stylesheet" href="/styles/creators-hub.css" />
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
+  <script src="/creators-hub/creators-hub.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="site-header"></div>
+
+  <main id="main" class="site-main creatorsHubRoot" data-hub-studio>
+    <div class="hub-container">
+      <a class="hub-back" href="/creators-hub/">← Back to Hub</a>
+      <p class="hub-kicker">Studio</p>
+      <h1 class="hub-title">Level 1 — Profile + Your Space</h1>
+      <p class="hub-subtitle">Set your name, avatar, links, and visual identity. This powers your public member page.</p>
+
+      <section class="hub-section hub-card">
+        <div class="hub-inline">
+          <h2>Creator's Badge</h2>
+          <span class="hub-pill">Level 1</span>
+        </div>
+        <div class="hub-badge-grid" data-badge-grid></div>
+      </section>
+
+      <section class="hub-section hub-card" aria-label="Supporter badge">
+        <div class="hub-inline">
+          <h2>Supporter Badge</h2>
+          <button class="hub-btn secondary" type="button" data-supporter-toggle>View Supporter Details</button>
+        </div>
+        <p class="hub-muted">Supporter licensing is a Phase 0 placeholder. No payments are active.</p>
+        <div class="hub-panel hidden" data-supporter-panel>
+          <div class="hub-split">
+            <div>
+              <h3>Supporter License</h3>
+              <ul class="hub-list">
+                <li>Status: Placeholder</li>
+                <li>Licensed Buildings: Studio, Workshop, Lab, Office</li>
+                <li>Max Level: 1</li>
+                <li>Start: TBD</li>
+                <li>End: TBD</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Creator's Badge</h3>
+              <div class="hub-badge-grid" data-badge-grid-alt></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="hub-section hub-card" aria-label="Profile editor">
+        <div data-profile-locked class="hub-panel hidden">
+          <h3>Sign in to edit your Studio profile.</h3>
+          <p class="hub-muted">Create an account or log in from the Hub dashboard to unlock editing.</p>
+        </div>
+        <form class="hub-form" data-profile-form>
+          <div>
+            <label for="displayName">Display name</label>
+            <input id="displayName" name="displayName" type="text" />
+          </div>
+          <div>
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio"></textarea>
+          </div>
+          <div class="hub-split">
+            <div>
+              <label for="avatarType">Avatar type</label>
+              <select id="avatarType" name="avatarType">
+                <option value="initials">Initials</option>
+                <option value="url">Image URL</option>
+              </select>
+            </div>
+            <div>
+              <label for="avatarColor">Avatar color</label>
+              <input id="avatarColor" name="avatarColor" type="color" />
+            </div>
+          </div>
+          <div>
+            <label for="avatarUrl">Avatar image URL (optional)</label>
+            <input id="avatarUrl" name="avatarUrl" type="url" />
+          </div>
+          <div>
+            <label for="primaryLogoUrl">Primary logo URL</label>
+            <input id="primaryLogoUrl" name="primaryLogoUrl" type="url" />
+          </div>
+          <div>
+            <label for="secondaryLogoUrl">Secondary logo URL (optional)</label>
+            <input id="secondaryLogoUrl" name="secondaryLogoUrl" type="url" />
+          </div>
+
+          <div class="hub-section">
+            <h3>Social links (max 5)</h3>
+            <div class="hub-form">
+              <div class="hub-inline" data-link-row>
+                <select data-platform-select></select>
+                <input type="url" placeholder="https://" />
+              </div>
+              <div class="hub-inline" data-link-row>
+                <select data-platform-select></select>
+                <input type="url" placeholder="https://" />
+              </div>
+              <div class="hub-inline" data-link-row>
+                <select data-platform-select></select>
+                <input type="url" placeholder="https://" />
+              </div>
+              <div class="hub-inline" data-link-row>
+                <select data-platform-select></select>
+                <input type="url" placeholder="https://" />
+              </div>
+              <div class="hub-inline" data-link-row>
+                <select data-platform-select></select>
+                <input type="url" placeholder="https://" />
+              </div>
+            </div>
+          </div>
+
+          <div class="hub-section">
+            <h3>Palette board (5–8 colors)</h3>
+            <div class="hub-inline">
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+              <input data-palette-input type="text" placeholder="#hex" />
+            </div>
+          </div>
+
+          <div class="hub-actions">
+            <button class="hub-btn primary" type="submit">Save Studio Profile</button>
+            <a class="hub-btn secondary" href="/creators-hub/members/" data-member-link>View public member page</a>
+          </div>
+          <p class="hub-note" data-profile-status></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

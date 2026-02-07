@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab — Creator's Hub</title>
+  <meta name="description" content="Lab Level 1 in Creator's Hub." />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <link rel="canonical" href="https://jgilbrothers.com/creators-hub/lab/" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <link rel="stylesheet" href="/styles/creators-hub.css" />
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
+  <script src="/creators-hub/creators-hub.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="site-header"></div>
+
+  <main id="main" class="site-main creatorsHubRoot" data-hub-lab>
+    <div class="hub-container">
+      <a class="hub-back" href="/creators-hub/">← Back to Hub</a>
+      <p class="hub-kicker">Lab</p>
+      <h1 class="hub-title">Level 1 — Learning + Research</h1>
+      <p class="hub-subtitle">Explore the J GIL knowledge shelf and track your interests.</p>
+
+      <section class="hub-section hub-card">
+        <div class="hub-inline">
+          <h2>Resource Library</h2>
+          <input class="hub-form" type="search" placeholder="Search resources" data-lab-search />
+        </div>
+        <ul class="hub-list">
+          <li data-lab-item><a href="/jgil-studios/blog/">J GIL Brothers Blog</a> — Branding insights and studio breakdowns.</li>
+          <li data-lab-item><a href="/tools/">Tools Hub</a> — AI tools and workflows.</li>
+          <li data-lab-item><a href="/jgil-studios/">Studio Work</a> — Case studies and projects.</li>
+          <li data-lab-item><a href="/about/">About J GIL Brothers</a> — Philosophy and background.</li>
+        </ul>
+      </section>
+
+      <section class="hub-section hub-card">
+        <h2>My Interests</h2>
+        <p class="hub-muted">Save keywords, topics, or research paths.</p>
+        <textarea class="hub-form" data-lab-interests placeholder="e.g., creative direction, brand systems, community building..."></textarea>
+        <p class="hub-note" data-lab-status></p>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

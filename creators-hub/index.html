@@ -3,16 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Creators Hub — J GIL Brothers</title>
-  <meta name="description" content="Creators Hub — the community space for projects, prompts, and shared direction inside the J GIL Brothers world." />
+  <title>Creator's Hub — J GIL Brothers</title>
+  <meta name="description" content="Creator's Hub dashboard for Studio, Workshop, Lab, and Office." />
   <meta name="theme-color" content="#0b0b0c" />
 
   <link rel="canonical" href="https://jgilbrothers.com/creators-hub/" />
   <meta name="robots" content="index, follow" />
 
   <link rel="stylesheet" href="/styles/styles.css" />
+  <link rel="stylesheet" href="/styles/creators-hub.css" />
   <script src="/scripts/main.js" defer></script>
   <script src="/scripts/layouts.js" defer></script>
+  <script src="/creators-hub/creators-hub.js" defer></script>
 </head>
 
 <body>
@@ -20,71 +22,105 @@
 
   <div id="site-header"></div>
 
-  <main id="main" class="site-main">
-    <section class="section hero" aria-label="Creators Hub hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <p class="kicker">Creators Hub</p>
-          <h1 class="hero-title">The circle. The direction. The build.</h1>
-          <p class="hero-subtitle">
-            This is the community layer — a place for projects, prompts, and shared constraints that keep the work cohesive.
-          </p>
+  <main id="main" class="site-main creatorsHubRoot" data-hub-dashboard>
+    <div class="hub-container">
+      <p class="hub-kicker">Creator's Hub</p>
+      <h1 class="hub-title">Phase 0 Map — Your Creator City</h1>
+      <p class="hub-subtitle">
+        All buildings are open at Level 1. Build your profile, store your notes, and explore resources.
+        Phase 1+ systems (timers, unlocks, companions) are intentionally on standby.
+      </p>
 
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="/jgil-studios/">See Studio Work</a>
-            <a class="btn btn-ghost" href="/tools/">Use the Tools</a>
-          </div>
-
-          <p class="hero-note">Start simple. Expand intentionally.</p>
+      <section class="hub-section hub-card" aria-label="Creator's Badge overview">
+        <div class="hub-inline">
+          <h2>Creator's Badge</h2>
+          <span class="hub-pill">Phase 0</span>
         </div>
-
-        <div class="hero-frame" aria-label="Creators Hub header image">
-          <img
-            src="/assets/images/global/J GIL-Picasso.png"
-            alt="J GIL Picasso header artwork"
-            style="width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--radius);"
-          />
+        <p class="hub-muted">Live status across Studio, Workshop, Lab, and Office.</p>
+        <div class="hub-badge-grid" data-badge-grid></div>
+        <div class="hub-actions">
+          <a class="hub-btn primary" href="/creators-hub/studio/">Enter Studio</a>
+          <a class="hub-btn secondary" href="/creators-hub/workshop/">Enter Workshop</a>
+          <a class="hub-btn secondary" href="/creators-hub/lab/">Enter Lab</a>
+          <a class="hub-btn secondary" href="/creators-hub/office/">Enter Office</a>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section manifesto" aria-label="Hub sections">
-      <div class="container">
-        <div class="section-head">
-          <h2 class="section-title">Hub Sections</h2>
-          <p class="section-subtitle">
-            These are placeholders you can evolve into real features (projects, prompt library, submissions, etc.).
-          </p>
+      <section class="hub-section hub-grid" aria-label="City buildings">
+        <article class="hub-card">
+          <h3>Studio</h3>
+          <p>Profile + your space. Customize your creator identity.</p>
+          <p class="hub-pill">Level 1</p>
+          <a class="hub-link-btn" href="/creators-hub/studio/">Open Studio</a>
+        </article>
+        <article class="hub-card">
+          <h3>Workshop</h3>
+          <p>Tools, templates, prompts, notes. Everything you need to build.</p>
+          <p class="hub-pill">Level 1</p>
+          <a class="hub-link-btn" href="/creators-hub/workshop/">Open Workshop</a>
+        </article>
+        <article class="hub-card">
+          <h3>Lab</h3>
+          <p>Learning + research. Find blogs, podcasts, and references.</p>
+          <p class="hub-pill">Level 1</p>
+          <a class="hub-link-btn" href="/creators-hub/lab/">Open Lab</a>
+        </article>
+        <article class="hub-card">
+          <h3>Office</h3>
+          <p>Checklists + planners + exports. Plan and ship.</p>
+          <p class="hub-pill">Level 1</p>
+          <a class="hub-link-btn" href="/creators-hub/office/">Open Office</a>
+        </article>
+      </section>
+
+      <section class="hub-section hub-split" data-hub-auth aria-label="Membership access">
+        <div class="hub-card">
+          <h3>Join the Hub</h3>
+          <p class="hub-muted">Create your membership and lock in your Creator profile.</p>
+          <form class="hub-form" data-signup-form>
+            <div>
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required />
+            </div>
+            <div>
+              <label for="signup-username">Username</label>
+              <input id="signup-username" name="username" type="text" required />
+            </div>
+            <div>
+              <label for="signup-display">Display name (optional)</label>
+              <input id="signup-display" name="displayName" type="text" />
+            </div>
+            <div>
+              <label for="signup-password">Password</label>
+              <input id="signup-password" name="password" type="password" required />
+            </div>
+            <p class="hub-note">We store your profile info for your member page, and an admin signup notification is sent.</p>
+            <button class="hub-btn primary" type="submit">Create account</button>
+          </form>
         </div>
-
-        <div class="manifesto-grid">
-          <div class="card">
-            <h3 class="card-title">Projects</h3>
-            <p class="card-text">Active builds, series, collaborations, and studio-aligned experiments.</p>
-            <a class="text-link" href="/creators-hub/">Open</a>
+        <div class="hub-card">
+          <h3>Log in</h3>
+          <p class="hub-muted">Use your Creator Hub credentials to access saved data.</p>
+          <form class="hub-form" data-login-form>
+            <div>
+              <label for="login-username">Username</label>
+              <input id="login-username" name="username" type="text" required />
+            </div>
+            <div>
+              <label for="login-password">Password</label>
+              <input id="login-password" name="password" type="password" required />
+            </div>
+            <button class="hub-btn secondary" type="submit">Log in</button>
+          </form>
+          <div class="hub-divider"></div>
+          <div class="hub-inline">
+            <button class="hub-btn secondary" data-logout type="button">Log out</button>
+            <span class="hub-muted" data-auth-session>Signed out.</span>
           </div>
-
-          <div class="card">
-            <h3 class="card-title">Prompts & Constraints</h3>
-            <p class="card-text">Repeatable frameworks that produce consistent outputs.</p>
-            <a class="text-link" href="/creators-hub/">Open</a>
-          </div>
-
-          <div class="card">
-            <h3 class="card-title">Direction</h3>
-            <p class="card-text">A simple “what we’re building next” lane. Keeps the circle aligned.</p>
-            <a class="text-link" href="/creators-hub/">Open</a>
-          </div>
+          <p class="hub-note" data-auth-status></p>
         </div>
-      </div>
-    </section>
-
-    <section class="section closing" aria-label="Closing statement">
-      <div class="container closing-inner">
-        <p class="closing-line">Community with standards.</p>
-        <p class="closing-sub">Not noise. Not feeds. Just direction.</p>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <div id="site-footer"></div>

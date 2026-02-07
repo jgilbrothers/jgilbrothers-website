@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Office — Creator's Hub</title>
+  <meta name="description" content="Office Level 1 in Creator's Hub." />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <link rel="canonical" href="https://jgilbrothers.com/creators-hub/office/" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <link rel="stylesheet" href="/styles/creators-hub.css" />
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
+  <script src="/creators-hub/creators-hub.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="site-header"></div>
+
+  <main id="main" class="site-main creatorsHubRoot" data-hub-office>
+    <div class="hub-container">
+      <a class="hub-back" href="/creators-hub/">← Back to Hub</a>
+      <p class="hub-kicker">Office</p>
+      <h1 class="hub-title">Level 1 — Planning + Exports</h1>
+      <p class="hub-subtitle">Fill out templates and export your plans as JSON or TXT.</p>
+
+      <section class="hub-section hub-card">
+        <h2>Office Templates</h2>
+        <div class="hub-form">
+          <div>
+            <label for="project-planner">Project Planner</label>
+            <textarea id="project-planner" data-template-input="projectPlanner" placeholder="Scope, milestones, delivery..."></textarea>
+          </div>
+          <div>
+            <label for="content-plan">Content Plan</label>
+            <textarea id="content-plan" data-template-input="contentPlan" placeholder="Series, cadence, themes..."></textarea>
+          </div>
+          <div>
+            <label for="brand-checklist">Brand Checklist</label>
+            <textarea id="brand-checklist" data-template-input="brandChecklist" placeholder="Identity, tone, assets..."></textarea>
+          </div>
+          <div>
+            <label for="link-tracker">Link Tracker</label>
+            <textarea id="link-tracker" data-template-input="linkTracker" placeholder="Links to monitor, outreach targets..."></textarea>
+          </div>
+          <div>
+            <label for="social-plan">Social Platform Plan</label>
+            <textarea id="social-plan" data-template-input="socialPlan" placeholder="Platforms, goals, KPI focus..."></textarea>
+          </div>
+          <div>
+            <label for="email-plan">Email List Plan</label>
+            <textarea id="email-plan" data-template-input="emailPlan" placeholder="Segments, cadence, lead magnets..."></textarea>
+          </div>
+        </div>
+        <div class="hub-template-actions">
+          <button type="button" data-export-json>Download JSON</button>
+          <button type="button" data-export-txt>Download TXT</button>
+        </div>
+        <p class="hub-note" data-office-status></p>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

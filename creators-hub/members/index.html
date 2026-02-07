@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Creator Profile — Creator's Hub</title>
+  <meta name="description" content="Creator profile page." />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <link rel="canonical" href="https://jgilbrothers.com/creators-hub/members/" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="stylesheet" href="/styles/styles.css" />
+  <link rel="stylesheet" href="/styles/creators-hub.css" />
+  <script src="/scripts/main.js" defer></script>
+  <script src="/scripts/layouts.js" defer></script>
+  <script src="/creators-hub/creators-hub.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="site-header"></div>
+
+  <main id="main" class="site-main creatorsHubRoot" data-member-page>
+    <div class="hub-container">
+      <a class="hub-back" href="/creators-hub/">← Back to Hub</a>
+      <p class="hub-kicker">Creator Profile</p>
+      <h1 class="hub-title">Member Page</h1>
+
+      <section class="hub-section hub-card" data-member-empty>
+        <h2>No profile found</h2>
+        <p class="hub-muted">This member page is available after you create a profile on this device.</p>
+      </section>
+
+      <section class="hub-section hub-card hidden" data-member-content>
+        <div class="hub-split">
+          <div>
+            <div class="hub-avatar" data-member-avatar></div>
+            <h2 data-member-name></h2>
+            <p class="hub-muted" data-member-bio></p>
+            <div class="hub-inline">
+              <span class="hub-pill" data-supporter-status></span>
+            </div>
+          </div>
+          <div>
+            <h3>Creator's Badge</h3>
+            <div class="hub-badge-grid" data-badge-grid></div>
+          </div>
+        </div>
+
+        <div class="hub-section">
+          <h3>Links</h3>
+          <ul class="hub-list" data-member-links></ul>
+        </div>
+
+        <div class="hub-section">
+          <h3>Logos</h3>
+          <div class="hub-split" data-member-logos></div>
+        </div>
+
+        <div class="hub-section">
+          <h3>Palette</h3>
+          <div class="hub-badge-grid" data-member-palette></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>
